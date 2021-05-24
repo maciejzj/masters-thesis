@@ -1,0 +1,122 @@
+\section{Characteristics of satellite imagery}
+
+\section{Encoder--decore mechanism}
+Encoder--decoder network architecture is a common pattern in generative image processing.
+It is used both in super--resolution models and in the data augmentation network presented in the latter chapters.
+Encoder--decoder translates input data into abstract state during encoding, then reconstructs it when decoding.
+The mid--point of the architecture usually bottlenecks the information containing compressed--like data.
+Convolutional interpretation of the encoder--decoder is usually used when working with images.
+During encoding process the depth of input is usually increased and spatial dimensions are shrunken.
+This is achieved by subsequent usage of convolutional and pooling layers.
+After encoding the compressed data can undergo some form of processing.
+For example it can be flatten and dense connected, although this is rarely applied in the super--resolution, because dense layers break the fully convolutional nature of a network (meaning that it can not process images of varying spatial size).
+The decoding process commonly reconstructs depth dimensions into spatial size by upsampling or transposed convolution.
+The output may match input dimension, however it is not necessary.
+In super--resolution it is common to output data of different size, than input.
+Encoder--decoder architecture is appropriate for image--to--image transformations in machine learning.
+The inner workings of such an architecture are shown in the figure \ref{fig:encoder--decoder}. 
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{example-image}
+    \caption{Schematic of encoder--decoder mechanism}
+    \label{fig:encoder-decoder}
+\end{figure}
+
+
+\section{Measuring quality of image--generating neural networks}
+
+Both super--resolution networks and data augmentation networks input and output images.
+Quantitive evaluation of such networks require comparison of two images---the network output and the ground truth reference image.
+Images are usually compared using metrics like \textit{mean absolute error}, \textit{mean square error} and \textit{peak signal to noise ratio (PSNR)}.
+These calculate error between pairs of corresponding pixels in different ways.
+However these metrics may be insufficient for super--resolution related problems.
+Calculating pixel--wise differences doesn't resemble the way humans estimate image quality.
+Images of varying perceived quality can have same \textit{PSNRs} compared to the reference image.
+
+To measure image similarity in more reliable way \textit{structural similarity index (SSIM)} was introduce.
+\textit{SSIM} calculates image quality in three components:
+\begin{itemize}
+	\item Average \textit{luminance}.
+	\item \textit{Contrast} as standard deviation of pixels.
+	\item \textit{Structure} as luminance difference divided by standard deviation.
+\end{itemize}
+However, these values are not calculated globally.
+Instead \textit{SSIM} values are measured using windows with pixel weights determined by Gaussian distribution.
+Values of \textit{SSIM} components are combined using a compound formula.
+Formal description of the \textit{SSIM} metric can be found in.
+\textit{SSIM} has a value between zero and one, where one means a perfect match between compared images.
+Having values in constrained a constrained range is another advantage of \textit{SSIM} over metrics like \textit{PSNR}.
+ %TODO: reference.
+Advantages of \textit{structural similarity index} render it suitable for super--resolution related image quality evaluation.
+
+\section{Super--resolution with HighRes--net}
+\subsection{Architecture overview}
+\textit{HighRes--net} is a super--resolution network based on generative deep learning.
+It falls into the category of \textit{multi--frame super--resolution (MFSR)} algorithms, which takes \textit{many--to--one} approach to output generation.
+In \textit{MSFR} systems input is a series of images, taken with a slight shift, perhaps with a small time interval.
+The input series contains more information, then a single image, as a result of random displacements, noise disturbances and atmospheric conditions.
+\textit{MSFR} tackles the problem of aliasing in sampled data.
+Low frequency parts of image, with large geometry and little detail don't differ much between many images.
+However \textit{MSFR} is crucial when enhancing small detailing.
+Upscaling small details from a single images can be non reliable due to aliasing.
+Applying \textit{MSFR} techniques and multiple low--resolution images fusion leads to de--aliasing information contained in the images.
+
+\textit{HighRes--net} processing is divided into four subtasks:
+\begin{enumerate}
+	\item \textbf{Co--registration}, which estimates relative geometric differences between input images. These include divergences, due to shifts, rotations, deformations, etc.)
+	\item \textbf{Fusion}, which combines multiple input images into single one, that is more refined.
+	\item \textbf{Up--sampling}, which upscales low into high--resolution image.
+	\item \textbf{Registration--at--the--loss}, which estimates relative geometric differences of high--resolution prediction nad ground truth, for more representative loss calculation. After calculating shift between super--resolution output and reference image, they are aligned using Lanczos resampling and then loss is measured.
+        % TODO: ref shiftnet
+	    The registration and alignement are learned by a model inspired by a \textit{ShiftNet} network architecture.
+\end{enumerate}
+The unique feature of \textit{HighRes--net} is that all of the above are learned in a single architecture in an end--to--end fashion.
+
+\subsection{Super--resolution inference process}
+The key element of \textit{HighRes--net} is achieving \textit{multi--frame super--resolution} by \textit{recursive fusion}.
+Image generation is done by a neural network organized in an encoder--decoder scheme.
+The input of the encoder is constructed from a series of low--resolution images.
+If necessary the input set is padded with zero--valued images, to ensure that the number of low--resolution images in a power of 2, which is required by the network architecture.
+For each input series a \textit{reference image} is computed using median values of images.
+Then the reference picture is paired with the input images.
+Each low--resolution and reference pair is processed through an embedding function.
+Embedding layer consists of a convolutional layer and two residual blocks with PReLu activations.
+For input of length \textit{n}, output of the encoding consists of \textit{n} images, each convolved with the reference image.
+In this scheme embedding learns to perform a process called \textit{implicit co--registration}, which is responsible for adjusting geometric differences between images in the input.
+It is important to notice that the embedding block is a single instance shared between input pairs.
+The embedding process block diagram is shown in the figure \ref{fig:highresnet-embedding}.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{example-image}
+    \caption{Schematic of embedding mechanism in \textit{HighRes--net}}
+    \label{fig:highresnet-embedding}
+\end{figure}
+
+The next step in the \textit{HighRes--net} architecture is \textit{recursive--fusion}.
+In this process output images are recursively fused together, pair by pair.
+Fusion operation consists of two steps---co--registration of input pair and the actual fusion.
+The co--registration of fused images is similar to the co--registration of input--reference pairs.
+It is done by convolutional layer with PReLu activation and two residual layers.
+Then the fusion itself is done, again by a combination convolutional layer and PReLu (this part doesn't include local residual layer).
+The whole co--registration--fusion includes a residual connection.
+Similarly to the embedding block, the fusion operator has a single instance that is shared for all steps of the recursion.
+This process is shown in the figure \ref{fig:highresnet-fusion}, where the output of sufficient number of recursive fusion steps is a single--image hidden state.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{example-image}
+    \caption{Schematic of fusion operation in \textit{HighRes--net}}
+    \label{fig:highresnet-fusion}
+\end{figure}
+
+The last step of super--resolution process is to upscale the image, by decoding the hidden state.
+This is done with transposed convolutional layer with PReLu activation.
+The transposition of the output of convolution makes the data grow in spatial dimensions, instead of the usual increase of depth when convolving.
+The final image is constructed by applying convolution of size one, which doesn't change the size of image.
+
+\subsection{Registered loss calculation}
+As stated before registration is important part of super--resolution algorithms.
+It is especially crucial at loss calculation step, where comparing unaligned pixels often lead to network blurring image, in result of a shift between output and the ground truth.
+Previous steps of \textit{HighRes--net} include an \textit{implicit co--registration}, where registration mechanisms learned by the network don't have to be necessarily based on shifts, but also other geometric distortions.
+During evaluation it is desired to register image shifts explicitly, thus the \textit{registration--at--loss} differs from registration performed during encoding and fusion.
+At the final step the sub--pixel registration is done by the \textit{ShiftNet--Lanczos} network.
+ 
