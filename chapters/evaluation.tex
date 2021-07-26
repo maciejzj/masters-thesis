@@ -1,12 +1,12 @@
 \section{Training HighRes--net}
-As stated in the experiment layout the final step consists in training HighRes--net super--resolution model with different data.
+As stated in the experiment layout, the final step consists in training HighRes--net super--resolution model with different data.
 One final step before conducting the training is to examine visually the results of augmentation on the Sentinel--2 image.
 These are presented for the simple convolutional augmentation network architecture in the figure \ref{fig:export-example} and \ref{fig:export-example-zoomed}.
 \begin{figure}
     \begin{subfigure}[t]{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{sentinel_export_hr}
-        \caption{Low--resolution}
+        \caption{High--resolution}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.3\textwidth}
@@ -27,7 +27,7 @@ These are presented for the simple convolutional augmentation network architectu
     \begin{subfigure}[t]{0.3\textwidth}
         \centering
         \includegraphics[width=\textwidth]{sentinel_export_zoomed_hr}
-        \caption{Low--resolution}
+        \caption{High--resolution}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.3\textwidth}
@@ -46,75 +46,72 @@ These are presented for the simple convolutional augmentation network architectu
 \end{figure}
 
 As planned, the super--resolution is to be trained with multi--image data in a single--band (eight band) mode.
-Training is configured in such a way, that only weights for the best validation score are saved.
-However, automatic stopping is not enabled, for this reason fitting was interrupted manually around epoch one hundred, when all training curves plateaued.
+Training is configured in such a way that only weights for the best validation score are saved.
+However, automatic stopping is not enabled, for this reason fitting was interrupted manually around epoch one hundred when all training curves plateaued.
 Training history has been plotted to visualize the loss fitting progress.
 
 \subsection{Cross validation as stop condition}
-Having multiple datasets generated in different ways, enables an alternative way of validating the training process.
+Having multiple datasets generated in different ways enables an alternative way of validating the training process.
 Instead of taking a subpart of the training set as validation data, one may use images generated in a different way.
 Such a technique may help to investigate the generalization capabilities of the super--resolution network.
 The datasets created using the simple convolutional network and resizing algorithm were used for the cross validation.
 In each of them, one set was used for fitting and the other was used for validation.
 This time the increasing validation loss indicates overfitting in early epochs, compared to previous trainings.
 This may indicate that the vast part of the fitting process does not contribute to overall generalization capability of the super--resolution network.
-The cross--validated trainings were stopped earlier; since only weights for the epoch with best validation score are saved it is pointless to run longer fittings.
+The cross--validated trainings were stopped earlier; since only weights for the epoch with the best validation score are saved, it is pointless to run longer fittings.
 Figure \ref{fig:highres-net-training-loss} shows the loss history for all discussed HighRes--net trainings, figure \ref{fig:highres-net-training-validation} presents validation loss improvement.
 \begin{figure}
     \centering
     \begin{tikzpicture}
-			\begin{axis}[width=\linewidth, height=10cm, grid=major, grid style={dashed}]
+			\begin{axis}[width=\linewidth, height=12cm, grid=major, grid style={dashed}, xlabel=Epoch, ylabel=Loss]
 			\addlegendentry{Bicubic}
-%			\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/};
+			\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/highresnet_s2ab_ab5_bb8_20210608-114450-training_loss.csv};
 			\addlegendentry{Simple convolutional}
-			%			\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/};
+						\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/highresnet_s2_degraded_simple_conv-dvc-21-07-04_044726_e34_bb8_20210706-183639-training_loss.csv};
 			\addlegendentry{Encoder--decoder}
-			%			\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/};
+						\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/highresnet_s2_degraded_autoencoder-dvc-21-07-04-052647_e23_bb8_20210707-100146-training_loss.csv};
 			\addlegendentry{GAN}
-			%			\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/};
-			\addlegendentry{t: Simple convolutional, v: Bicubic}
-			%			\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/};
+						\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/highresnet_s2_degraded-gan-dvc-21-07-04-055506_e94_bb8_20210707-152641-training_loss.csv};
 			\addlegendentry{t: Bicubic, v: Simple convolutional}
-			%			\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/};
-			\end{axis}
-		\end{tikzpicture}
+						\addplot+[mark=none, color=green] table [x=step, y=value, col sep=comma] {data/highresnet_s2ab_ab5_bb8_20210726-160215-training_loss.csv};
+
+			\end{axis}		\end{tikzpicture}
     \caption{HighRes--net training loss history}
     \label{fig:highres-net-training-loss}
 \end{figure}
 \begin{figure}
     \centering
     \begin{tikzpicture}
-			\begin{axis}[width=\linewidth, height=10cm, grid=major, grid style={dashed}]
+			\begin{axis}[width=\linewidth, height=12cm, grid=major, grid style={dashed}, xlabel=Epoch, ylabel=Loss]
 			\addlegendentry{Bicubic}
-%			\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/};
+			\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/highresnet_s2ab_ab5_bb8_20210608-114450-validation_loss.csv};
 			\addlegendentry{Simple convolutional}
-			%			\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/};
+						\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/highresnet_s2_degraded_simple_conv-dvc-21-07-04_044726_e34_bb8_20210706-183639-validation_loss.csv};
 			\addlegendentry{Encoder--decoder}
-			%			\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/};
+						\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/highresnet_s2_degraded_autoencoder-dvc-21-07-04-052647_e23_bb8_20210707-100146-validation_loss.csv};
 			\addlegendentry{GAN}
-			%			\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/};
-			\addlegendentry{t: Simple convolutional, v: Bicubic}
-			%			\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/};
+						\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/highresnet_s2_degraded-gan-dvc-21-07-04-055506_e94_bb8_20210707-152641-validation_loss.csv};
 			\addlegendentry{t: Bicubic, v: Simple convolutional}
-			%			\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/};
+						\addplot+[mark=none, color=green] table [x=step, y=value, col sep=comma] {data/highresnet_s2ab_ab5_bb8_20210726-160215-validation_loss.csv};
+
 			\end{axis}		\end{tikzpicture}
     \caption{HighRes--net validation loss history}
     \label{fig:highres-net-training-validation}
 \end{figure}
 
 \section{Evaluation and results}
-According to the experiment layout the trained super--resolution models are to be evaluated on a variety of test datasets to examine generalization capabilities and robustness.
+According to the experiment layout, the trained super--resolution models are to be evaluated on a variety of test datasets to examine generalization capabilities and robustness.
 As stated before, the evaluation datasets include:
 \begin{itemize}
-	\item Test subsets from all augmented Sentinel--2 datasets, that can be used for calculating numerical metrics.
-	\item Real--life Sentinel--2 images, that were not used in the training process. These do not include high and low--resolution pairs, so only visual examination can be performed.
-	\item Proba--V test dataset, that can be used for calculating numerical metrics.
+	\item Test subsets from all augmented Sentinel--2 datasets that can be used for calculating numerical metrics.
+	\item Real--life Sentinel--2 images that were not used in the training process. These do not include high and low--resolution pairs, so only visual examination can be performed.
+	\item Proba--V test dataset that can be used for calculating numerical metrics.
 \end{itemize}
 It should be noticed that the later two test sets differ in the GSD parameter from the synthetic low--resolution images in the Sentinel--2 training datasets.
-This data is still valid for evaluation and investigation, because it is desirable that super--resolution, and machine learning algorithms in general, work on objects of any scale and size.
-Limiting tests to single GSD would draw incomplete picture of the results.
+This data is still valid for evaluation and investigation because it is desirable that super--resolution, and machine learning algorithms in general, work on objects of any scale and size.
+Limiting tests to single GSD would draw an incomplete picture of the results.
 The results of evaluation are presented in the table \ref{tab:super-res-results}, where rows designate test datasets and columns indicate models trained on data created in different ways.
-For the cross--validation training scenarios letters \textit{t} and \textit{v} indicate training and validation datasets respectively.
+For the cross--validation training scenarios, letters \textit{t} and \textit{v} indicate training and validation datasets respectively.
 The \textit{cPSNR} score was used as the super--resolution evaluation metric.
 
 The best results are observed on the diagonal of the table, which means that the algorithm works best on test data created in the same way as training data for a given model.
@@ -124,31 +121,30 @@ This result is expected and indicates that no gross mistakes were made in the co
 \label{tab:super-res-results}
 \begin{adjustbox}{center}
 \small
-\begin{tabular}{lcccccc}
+\begin{tabular}{lccccc}
 \toprule
 cPSNR &
   Bicubic &
   Simple conv &
   Encoder--decoder &
   GAN &
-  \begin{tabular}[c]{@{}c@{}}t: Simple conv\\ v: Bicubic\end{tabular} &
-  \begin{tabular}[c]{@{}c@{}}t: Bicubic\\ v: Simple conv\end{tabular} \\
+  \begin{tabular}[c]{@{}c@{}}t: Bicubic\\ v: Simple convolutional\end{tabular} \\
 \midrule
-Bicubic                      &  35.78 & 28.96 & 24.55 & 25.80 & &  \\
-Simple conv                  & 33.69 & 36.15 & 27.16 & 29.83 &  &  \\
-Encoder--decoder             & 31.72 & 31.78 & 34.43 & 30.22 &  &  \\
-GAN                          & 28.63 & 28.63 & 27.27 & 35.72 &  &  \\
-Artifacts on real Sentinel 2 & yes & yes  & yes & yes & no & no \\
-Proba V                      & 43.36 & 42.02 & 40.43 & 40.91 &  &  \\
+Bicubic                      &  35.78 & 28.96 & 24.55 & 25.80 &  35.26 \\
+Simple convolutional                  & 33.69 & 36.15 & 27.16 & 29.83 & 33.67  \\
+Encoder--decoder             & 31.72 & 31.78 & 34.43 & 30.22 & 31.76 \\
+GAN                          & 28.63 & 28.63 & 27.27 & 35.72 &  30.28 \\
+Artifacts on real Sentinel--2 & yes & yes  & yes & yes & no  \\
+Proba--V                      & 43.36 & 42.02 & 40.43 & 40.91 & 43.51  \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
 \end{sidewaystable}
-As stated before the results on the Sentinel--2 real--life image were evaluated visually, by observing artifacts in the images.
+As stated before, the results on the Sentinel--2 real--life image were evaluated visually by observing artifacts in the images.
 The figure \ref{fig:sentinel-2-real-artifacts-simple-conv} shows artifacts presence on test image for networks trained on augmented data with and without cross--validation.
-The artifacts take form of mosaic--like overlay or checkerboard effect distorting the image, especially in high frequency areas.
+The artifacts take form of a mosaic--like overlay or checkerboard effect distorting the image, especially in high frequency areas.
 The cross--validated model that was stopped in the earlier epoch shows less visible artifacts.
-The same observation can be made looking at the figure \ref{fig:sentinel-2-real-artifacts-bicubic}, which shows the same phenomenon for training set created using bicubic interpolation.
+The same observation can be made looking at the figure \ref{fig:sentinel-2-real-artifacts-bicubic}, which shows the same phenomenon for the training set created using bicubic interpolation.
 These two observations are marked in the results table \ref{tab:super-res-results}.
 \begin{figure}
     \begin{subfigure}[t]{0.45\textwidth}
@@ -185,6 +181,6 @@ The results in the table \ref{tab:super-res-results} can be summarized in the fo
 \begin{itemize}
 	\item Data created with augmentation techniques, both traditional and deep learning--based is suitable for training super--resolution networks.
 	\item The different deep learning architectures give fairly similar results, although the simplest one works best.
-	\item At the moment the bicubic interpolation gives slightly better results, possible reasons for that and suggestions of improvement are included in the summary.
-	\item The cross--validation proves that all training are prone to overfitting to the data generation techniques. Early stopping based on different datasets can prevent this phenomenon and reduce artifacts on real--world data.
+	\item At the moment, the bicubic interpolation gives slightly better results, possible reasons for that and suggestions of improvement are included in the summary.
+	\item The cross--validation proves that all training are prone to overfitting to the data generation techniques. Early stopping based on different datasets can leads to this conclusion.
 \end{itemize}
