@@ -1,0 +1,33 @@
+\documentclass[tikz]{standalone}
+\usepackage[utf8]{inputenc}
+
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes}
+\usetikzlibrary{calc}
+
+\begin{document}
+	
+\tikzset{arrow/.style={-stealth}}
+
+\begin{tikzpicture}[ampersand replacement=\&]
+   	\node[text width=0.25cm] at (-2.5,0) (X) {$ \mathbf x $};		 
+    \node[rectangle, rounded corners, draw, fill=blue!20, minimum height=1cm] at (0,0) (G) {\textsc{Generator}};	
+    \node[rectangle, rounded corners, draw, minimum height=1cm] at (3,0) (S1) {\textsc{Sample}};
+    
+    \node[text width=0.5cm] at (0.75,3) (Y) {$ \mathbf y_{gt} $};		 
+    \node[rectangle, rounded corners, draw, minimum height=1cm] at (3,3) (S2) {\textsc{Sample}};
+    
+    \node[rectangle, rounded corners, draw, fill=blue!20, minimum height=1cm] at (6,1.5) (D) {\textsc{Discriminator}};
+    
+    \node[text width=2cm] at (10,1.5) (O) {\textsc{Real/Fake Prediction}};
+     
+    \path[arrow] (X) edge (G)
+    (G) edge (S1)
+    (S1) edge (D.south west)
+    (Y) edge (S2)
+    (S2) edge (D.north west)  
+    (D) edge (O)
+    ;
+\end{tikzpicture}
+
+\end{document}

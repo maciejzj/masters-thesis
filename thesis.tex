@@ -1,14 +1,22 @@
 % Paper, encoding and fonts settings
-\documentclass{report}
+\documentclass[a4paper, openright, twoside, 12pt]{report}
 \usepackage{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{dsfont}
 
 % Document structure and layout
 \usepackage{pdfpages}
 \usepackage[toc,page]{appendix}
+\usepackage{standalone}
+\usepackage[absolute]{textpos}
+\usepackage{setspace}
+\usepackage{adjustbox}
+\usepackage{rotating}
 
 % Graphics and plotting
+\usepackage{tikz}
+\usepackage{pgfplots}
 \usepackage{graphicx}
 \graphicspath{ {graphics/} }
 
@@ -24,14 +32,22 @@
 \usepackage[justification=centering]{caption}
 \usepackage{subcaption}
 % Listings
+\usepackage{algorithm}
+\usepackage{algorithmic}
 \usepackage{minted}
 % Make sure that hyperref is last loaded package
 \usepackage[hidelinks]{hyperref}
 
-% Define centered column type with fixed width
-\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+% Pgfplots configuration
+\usepgfplotslibrary{statistics}
+
 \begin{document}
 \pagenumbering{gobble}
+
+\input{titlepage}
+
+% Create minted environment for long listings with page breaks
+\newenvironment{longlisting}{\captionsetup{type=listing}}{}
 
 % Introductory pages
 \begin{abstract}
@@ -61,6 +77,7 @@ were trained on the datasets created during the project.
 \end{abstract}
 
 \tableofcontents
+\cleardoublepage
 
 \pagenumbering{arabic}
 
@@ -71,14 +88,17 @@ were trained on the datasets created during the project.
 \chapter{Overview of super--resolution imaging techniques}
 \input{chapters/overview}
 
+\chapter{Scope of the work}
+\input{chapters/scope}
+
 \chapter{Data augmentation with usage of deep learning}
 \input{chapters/augmentation}
 
 \chapter{Super--resolution training and evaluation}
 \input{chapters/evaluation}
 
-\chapter{Results}
-\input{chapters/results}
+\chapter{Summary}
+\input{chapters/summary}
 
 \begin{appendices}
     \input{chapters/appendices}
@@ -87,6 +107,7 @@ were trained on the datasets created during the project.
 % Lists of objects
 \listoffigures
 \listoftables
+\listofalgorithms
 \listoflistings
 
 % Bibliography

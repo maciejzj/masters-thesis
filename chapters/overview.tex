@@ -1,6 +1,48 @@
 \section{Characteristics of satellite imagery}
+This works centers around super--resolution technique in the sphere of satellite imagery.
+As mentioned in the introduction image enhancing can be domain specific.
+This is especially crucial when satellite photos are taken into account.
+Pictures taken from aerospace devices differ substantially from normal photography.
+Mulit--image observation is usually favoured over single--image.
+Satellites often take a series of photos of a single scene.
+This puts emphasis on the mulit image super--resolution techniques in the many--to--one fashion.
+Another unique feature of satellite observations is the usual spectral width of the imagery.
+Scientific \textit{hyper--spectral} apparatus present on satellites, often take photos in a very wide spectrum that may not include frequencies of visible light.
+This specific kind of image with large spectral dimension is often called a \textit{hyper--spectral cube}, because it can be represented as a three dimensional tensor (cube) with height, width and spectral dimensions.
+Spectral bands in the cube can contain wavelengths such as infrared, near--infrared, panchromatic\footnote{A spectral range similar to the range of traditional monochromatic grayscale photography. This range is usually highlighted, because of connections with pre--digital imaging of the past century.}, radio frequencies and more.
+Such images are often stored in special file formats or in a series of high bit--depth standard lossless image formats PNG or TIFF.
+These can take up to 12 bands in different files per a single satellite photography.
+Another crucial property of satellite imagery is the GSD (\textit{ground sample distance}) parameter, which denotes spacial distance between pixels of digital image.
+For example, one--meter GSD states that location of adjacent pixels is one meter apart on the ground.
 
-\section{Encoder--decore mechanism}
+\section{Machine learning for image processing}
+\subsection{Neural networks and deep learning}
+\textit{Machine learning} is a computer science technique that solves problems by fitting algorithms to data, by optimization algorithms and statistics.
+This approach contrasts with the traditional imperative problem--solving, where algorithms are designed with step--by--step attitude.
+\textit{Artificial neural networks} are machine learning structures modeled after living organisms.
+The traditional neural networks consist of layers of densely connected neurons.
+Each of the neurons contains a set of inputs with connected weights.
+The output of a neuron is passed through a nonlinear activation function.
+The fitting process of such a network consists in adjusting the input weights.
+This kind of machine learning architecture has been initially used with a set of predefined image filters.
+A set of such filters would include basic geometric shapes.
+These small filters would be convoluted with the input image.
+Results of such an operation would be then fed into the neural network to get the final result of image processing.
+With the advancements in the machine learning area a new kind of neural network layer was created---a \textit{convolutional layer}.
+These layers consist of (one, two or even three dimensional) filters that cam be convoluted with the input image.
+However, in  contrast to the older technique, these filters are adjusted in the fitting process of the network.
+Elements in the filter tensor are treated like neuron weights and they are accommodated during gradient descent.
+This enables creation of much better and flexible image processing neural networks.
+
+However, the creation of convolutional neural networks leads to increasing complexity and number of parameters in models.
+This issue can be addressed by using very large datasets for the fitting process.
+Nowadays the smallest datasets for training modern neural networks contain thousands of images.
+Such trainings require a lot of time and processing power; they usually must be performed using (even multiple) GPUs and may last a few days.
+This combination of three factors: complex mulit--layered neural networks (often with media--oriented specialized layers), very large datasets (often with many classes and objects) and utilization of expensive time and resource--consuming trainings constitute what is called \textit{deep learning}.
+This kind of machine learning has proven, in the last ten years, to hold a revolutionary potential, pushing forward techniques such as image and audio processing beyond what is possible with older methods.
+Super--resolution, which this work revolves around, is possible thanks to advancements in the deep learning.
+
+\subsection{Encoder--decoder mechanism}
 Encoder--decoder network architecture is a common pattern in generative image processing.
 It is used both in super--resolution models and in the data augmentation network presented in the latter chapters.
 Encoder--decoder translates input data into abstract state during encoding, then reconstructs it when decoding.
@@ -14,16 +56,23 @@ The decoding process commonly reconstructs depth dimensions into spatial size by
 The output may match input dimension, however it is not necessary.
 In super--resolution it is common to output data of different size, than input.
 Encoder--decoder architecture is appropriate for image--to--image transformations in machine learning.
-The inner workings of such an architecture are shown in the figure \ref{fig:encoder--decoder}. 
+The inner workings of such an architecture are shown in the figure \ref{fig:encoder-decoder}, where $ x $ and $ y $ denote input and output and $ z $ is the encoded hidden state. 
 \begin{figure}
     \centering
-    \includegraphics[width=0.5\textwidth]{example-image}
+    \input{figures/encoder_decoder}
     \caption{Schematic of encoder--decoder mechanism}
     \label{fig:encoder-decoder}
 \end{figure}
 
+Encoder--decoder mechanism is often enhanced with \textit{residual connections}.
+These are often called \textit{skip connections}, because they form parallel branches in networks that skip certain operations.
+These skip routes are then summed with the result of an operation, resulting in additional direct flow of information during forward and direct gradient flow on the backward pass.
+Residual connections applied between arms of an encoder--decoder create what is called an \textit{U--Net} architecture.
+In the case of super--resolution processing the forward skips can be viewed as routes for transporting unprocessed low--frequency information.
+This information can be used during the decoding step in the encoder--decoder scheme.
+Another way to understand residual connection is to look at them as local ensembles of shallow networks.
 
-\section{Measuring quality of image--generating neural networks}
+\subsection{Measuring quality of image--generating neural networks}
 
 Both super--resolution networks and data augmentation networks input and output images.
 Quantitive evaluation of such networks require comparison of two images---the network output and the ground truth reference image.
@@ -33,7 +82,7 @@ However these metrics may be insufficient for super--resolution related problems
 Calculating pixel--wise differences doesn't resemble the way humans estimate image quality.
 Images of varying perceived quality can have same \textit{PSNRs} compared to the reference image.
 
-To measure image similarity in more reliable way \textit{structural similarity index (SSIM)} was introduce.
+To measure image similarity in more reliable way \textit{structural similarity index (SSIM)} \cite{wang-2004-ssim} was introduced.
 \textit{SSIM} calculates image quality in three components:
 \begin{itemize}
 	\item Average \textit{luminance}.
@@ -46,21 +95,35 @@ Values of \textit{SSIM} components are combined using a compound formula.
 Formal description of the \textit{SSIM} metric can be found in.
 \textit{SSIM} has a value between zero and one, where one means a perfect match between compared images.
 Having values in constrained a constrained range is another advantage of \textit{SSIM} over metrics like \textit{PSNR}.
- %TODO: reference.
 Advantages of \textit{structural similarity index} render it suitable for super--resolution related image quality evaluation.
+However, modified versions of the previously mentioned traditional metrics can also prove to be useful in the image comparison, one of them being the \textit{cPSNR}.
+The traditional PSNR has a potential drawback of being sensitive to bias in image brightness.
+This metric equalizes average brightness of compared images before calculating standard PSNR to alleviate this problem.
+Various of the mentioned metrics were in this work, in accord to specific requirements of each step in the augmentation and super--resolution training process.
+
+Another challange often encountered during super--resolution evaluation consists in aligning image pairs correctly.
+Often two images that are to be compared are slightly shifted; it is common for these dislocations to lay in sub--pixel domain.
+The process of aligning two similar images is called \textit{registration}.
+Registration can be performed either with traditional or deep learning based algorithms.
 
 \section{Super--resolution with HighRes--net}
-\subsection{Architecture overview}
-\textit{HighRes--net} is a super--resolution network based on generative deep learning.
-It falls into the category of \textit{multi--frame super--resolution (MFSR)} algorithms, which takes \textit{many--to--one} approach to output generation.
-In \textit{MSFR} systems input is a series of images, taken with a slight shift, perhaps with a small time interval.
-The input series contains more information, then a single image, as a result of random displacements, noise disturbances and atmospheric conditions.
-\textit{MSFR} tackles the problem of aliasing in sampled data.
-Low frequency parts of image, with large geometry and little detail don't differ much between many images.
-However \textit{MSFR} is crucial when enhancing small detailing.
-Upscaling small details from a single images can be non reliable due to aliasing.
-Applying \textit{MSFR} techniques and multiple low--resolution images fusion leads to de--aliasing information contained in the images.
+In recent years many super--resolution architectures have emerged due to advancements in deep learning techniques.
+At the moment the state--of--the art model is RAMS (\textit{Residual Attention Multi-image Super-resolution}).
+However in this work \textit{HighRes--net} architecture is utilized.
+\textit{HighRes--net}, which is few months older, achieves slightly worse results, however it is simpler and faster to train \cite{paperswithcode-ranking}.
+Because the aim of the work is to compare different data generation techniques, not the super--resolution algorithms themselves, the more manageable architecture was chosen.
+A brief description of the more sophisticated architecture is also given to provide a wider context.
 
+\subsection{Architecture overview}
+\textit{HighRes--net} \cite{deudon-2020-highresnet} is a super--resolution network based on generative deep learning.
+It falls into the category of \textit{multi--frame super--resolution (MFSR)} algorithms, which takes \textit{many--to--one} (or \textit{multi--image}) approach to output generation.
+In MSFR systems input is a series of images, taken with a slight shift, perhaps with a small time interval.
+The input series contains more information, then a single image, as a result of random displacements, noise disturbances and atmospheric conditions.
+MSFR tackles the problem of aliasing in sampled data.
+Low frequency parts of image, with large geometry and little detail don't differ much between many images.
+However MSFR is crucial when enhancing small detailing.
+Upscaling small details from a single images can be non reliable due to aliasing.
+Applying MSFR techniques and multiple low--resolution images fusion leads to de--aliasing information contained in the images.
 \textit{HighRes--net} processing is divided into four subtasks:
 \begin{enumerate}
 	\item \textbf{Co--registration}, which estimates relative geometric differences between input images. These include divergences, due to shifts, rotations, deformations, etc.)
@@ -73,6 +136,15 @@ Applying \textit{MSFR} techniques and multiple low--resolution images fusion lea
 The unique feature of \textit{HighRes--net} is that all of the above are learned in a single architecture in an end--to--end fashion.
 
 \subsection{Super--resolution inference process}
+The inference pipeline of HighRes--net is shown in the figure \ref{fig:highresnet-inference}.
+The consecutive paragraphs will walk through each step in the process and explain how super--resolution is performed.
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{high_res_net_inference}
+    \caption{Schematic of inference in \textit{HighRes--net}}
+    \label{fig:highresnet-inference}
+\end{figure}
+
 The key element of \textit{HighRes--net} is achieving \textit{multi--frame super--resolution} by \textit{recursive fusion}.
 Image generation is done by a neural network organized in an encoder--decoder scheme.
 The input of the encoder is constructed from a series of low--resolution images.
@@ -84,13 +156,6 @@ Embedding layer consists of a convolutional layer and two residual blocks with P
 For input of length \textit{n}, output of the encoding consists of \textit{n} images, each convolved with the reference image.
 In this scheme embedding learns to perform a process called \textit{implicit co--registration}, which is responsible for adjusting geometric differences between images in the input.
 It is important to notice that the embedding block is a single instance shared between input pairs.
-The embedding process block diagram is shown in the figure \ref{fig:highresnet-embedding}.
-\begin{figure}
-    \centering
-    \includegraphics[width=0.5\textwidth]{example-image}
-    \caption{Schematic of embedding mechanism in \textit{HighRes--net}}
-    \label{fig:highresnet-embedding}
-\end{figure}
 
 The next step in the \textit{HighRes--net} architecture is \textit{recursive--fusion}.
 In this process output images are recursively fused together, pair by pair.
@@ -100,23 +165,33 @@ It is done by convolutional layer with PReLu activation and two residual layers.
 Then the fusion itself is done, again by a combination convolutional layer and PReLu (this part doesn't include local residual layer).
 The whole co--registration--fusion includes a residual connection.
 Similarly to the embedding block, the fusion operator has a single instance that is shared for all steps of the recursion.
-This process is shown in the figure \ref{fig:highresnet-fusion}, where the output of sufficient number of recursive fusion steps is a single--image hidden state.
-\begin{figure}
-    \centering
-    \includegraphics[width=0.5\textwidth]{example-image}
-    \caption{Schematic of fusion operation in \textit{HighRes--net}}
-    \label{fig:highresnet-fusion}
-\end{figure}
 
 The last step of super--resolution process is to upscale the image, by decoding the hidden state.
 This is done with transposed convolutional layer with PReLu activation.
 The transposition of the output of convolution makes the data grow in spatial dimensions, instead of the usual increase of depth when convolving.
-The final image is constructed by applying convolution of size one, which doesn't change the size of image.
+The final image is constructed by applying convolution of size one, which doesn't change the size of the image.
 
 \subsection{Registered loss calculation}
-As stated before registration is important part of super--resolution algorithms.
-It is especially crucial at loss calculation step, where comparing unaligned pixels often lead to network blurring image, in result of a shift between output and the ground truth.
+As stated before registration is an important part of \textit{HighRes--net} architecture.
+It is especially crucial at loss calculation step.
+Without registration the network would learn to output blurry images, as a result of shift between predictions and targets.
 Previous steps of \textit{HighRes--net} include an \textit{implicit co--registration}, where registration mechanisms learned by the network don't have to be necessarily based on shifts, but also other geometric distortions.
-During evaluation it is desired to register image shifts explicitly, thus the \textit{registration--at--loss} differs from registration performed during encoding and fusion.
+During evaluation it is desired to register image shifts explicitly, thus the \textit{registration--at--loss} differs from the registration performed during encoding and fusion.
 At the final step the sub--pixel registration is done by the \textit{ShiftNet--Lanczos} network.
- 
+\textit{ShiftNet} \cite{zhaoyi-2018-shiftnet} was introduced before \textit{HighRes--net}, in a separate research.
+It was created with image inpainting via \textit{Deep Feature Rearrangement}.
+Because this kind of filling missing picture areas works by reusing and transferring existing data it is suitable to be used as a registration mechanism.
+It implements a modified \textit{U--Net} \cite{ronnenberger-2015-unet} architecture.
+As mentioned in the introduction, U--Nets follow the encoder--decoder pattern with multiple residual connections.
+Pairs of convolution and deconvolution layers in the contracting and expanding arms of a U--Net feature a residual connection.
+The \textit{ShitNet} variant of \textit{U--Net} architecture contains an additional \textit{shift} operation for one of these residual connections.
+More about \textit{ShiftNet} can be found in the publication.
+
+\section{Other super--resolution architectures}
+As mentioned, other super--resolution architectures are available, with RAMS \cite{salvetti-2020-rams} being the best performing one.
+RAMS utilizes a novel technique called \textit{feature attention mechanism}, which enables the network to focus on high--frequency information that can be used to produce more detailed outputs.
+This leads to overcoming main locality limitations of convolutional operations.
+Mechanism used in RAMS are specifically aimed at multi--image super--resolution of remote sensing data.
+RAMS approach takes into account the nature of satellite imagery---relatively low spatial resolution and high depth and temporal resolution.
+The attention mechanism works with three dimensional convolutions to explore all possible directions.
+This architecture puts emphasis on simultaneous data exploration and from spatial and temporal dimension resulting in best quality of multi--image super--resolution.

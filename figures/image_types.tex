@@ -1,0 +1,62 @@
+\documentclass[tikz]{standalone}
+\usepackage[utf8]{inputenc}
+
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes}
+\usetikzlibrary{calc}
+
+\begin{document}
+
+\tikzstyle{cell} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
+\tikzset{arrow/.style={-stealth}}
+
+\begin{tikzpicture}[ampersand replacement=\&]
+	\node[cell, fill=blue!20] at (0,0) (D) {Data};
+	
+	\node[cell] at (0, 2) (FS) {Frequency spectrum};
+	\node[cell] at (-2.5, 4) (MB) {Multi--band};
+	\node[cell] at (2.5, 4) (SB) {Single--band};
+	
+	\node[cell] at (-4.5, -2) (MI) {Mulit--image};
+	\node[cell] at (4.5, -2) (SI) {Single--image};
+	
+	\node[cell] at (-8, -4) (SIM) {Simulated};
+	\node[cell] at (-4.5, -4) (SS) {Semi--simulated};
+	\node[cell] at (-1, -4) (RLM) {Real--life};
+	
+	\node[cell] at (2.75, -4) (SIS) {Simulated};
+	\node[cell] at (6.25, -4) (RLS) {Real--life};
+	
+	\node[cell] at (0, -6.5) (SM) {Simulation method};
+	
+	\node[cell] at (-2.5, -8.5) (T) {Traditional};
+	\node[cell] at (-5, -10.5) (IM) {Interpolation modes};
+	\node at (-2.5, -10.5) { $ \dots $ };
+	
+	
+	\node[cell] at (2.5, -8.5) (DL) {Deep learning};
+	\node[cell] at (1, -10.5) (NA) {Network architectures};
+	\node at (3.75, -10.5) { $ \dots $ };
+
+    \path[arrow]
+    (D) edge (FS)
+    (FS) edge (MB)
+    (FS) edge (SB)
+    (D) edge (MI)
+    (D) edge (SI)
+    (MI) edge (SIM)
+    (MI) edge (SS)
+    (MI) edge (RLM)
+    (SI) edge (SIS)
+    (SI) edge (RLS)
+    (SIM) edge (SM)
+    (SS) edge (SM)
+    (SIS) edge (SM)
+    (SM) edge (T)
+    (SM) edge (DL)
+    (T) edge (IM)
+    (DL) edge (NA)
+    ;
+\end{tikzpicture}
+
+\end{document}

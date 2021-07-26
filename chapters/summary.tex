@@ -1,0 +1,19 @@
+In the course of the work various approach to data augmentation were explored.
+Three different deep leaning architectures were introduced and compared with the traditional approach.
+The augmentation networks were trained on real--life data and used to export new datasets to fit the super--resolution algorithm.
+Then the super--resolution models were evaluated on various synthetic and real--file images; both in numerical and visual way.
+The cross--validation based approach to training supervision proved to be valuable.
+The deep learning based methods proved to be of utility, yet slightly below what would be expected, since they didn't surpass the bicubic interpolation approach.
+There may be a variety of reasons for that to explore.
+Many possibilities were not explored in a full way; translations between low--resolution images, may be investigated in a greater detail.
+Modeling them after distribution extracted from a real--world dataset may lead to enhanced results.
+The semi--simulated approach for data generation was not included in the scope of the work, however it would be interesting to investigate this option in the future.
+
+The most novel observation in the work is connected with the cross--validation technique during training.
+Early stopping training based on this approach lead to good results.
+This indicates a greater overfitting problem in regard to data generation method.
+The robust data augmentation problem remains open, however valuable observations about issue of super--resolution generalization has been made.
+
+There is value in the opportunity for further development of the work and more detailed investigation.
+Achieving robustness and greater generalization of super--resolution techniques through better data augmentation is an important step towards productization of this technique.
+A super--resolution algorithm independent of satellite data type would be useful in image  processing pipeline during aerospace missions, remote sensing tasks and Earth observations.
