@@ -5,10 +5,10 @@ Some architectures, like the \textit{HighRes--net} feature deep learning based b
 However, for training a simple image--downscaling augmentation network, a more traditional approach to image alignement can be implemented.
 The preparation of dataset requires to turn the single high--resolution and multiple low--resolution imageset into high and low--res pairs.
 This can be done by multiplying high--resolution images and aligning each copy with the corresponding low--resolution one.
-Registering shift between images can be done using \textit{phase--correlation} \cite{guizar-2008-registration}.
-This method utilizes two--dimensional \textit{Fourier transform}.
-To register sub--pixel translations, images can be upscaled before applying the algorithm.
-Since images to be aligned in Proba are of different resolution, they should be resized to common shape before registration.
+
+Among the image registration algorithms presented in Section \ref{sec:registration}, phase-correlation was chosen for aligning image pairs in the Proba dataset.
+This method is suitable for the preprocessing task and is implemented as a part of popular image processing libraries.
+Since pictures to be aligned in Proba are of different resolution, they should be resized to a common shape before registration.
 It was decided to perform registration in the high--resolution image domain.
 Shifting images will create blank columns and rows on their borders, which were removed by cropping the images.
 It is known that low--resolution images in Proba have sub--pixel dislocation, for this reason they should be cropped with one pixel border.
@@ -213,6 +213,46 @@ The fitting process of a \textsc{gan} network can also be visualized in the form
     \caption{Schematic of \textsc{gan} network inner--workings}
     \label{fig:gan-training}
 \end{figure}
+The final Tensorflow 2 implementation of the custom training loop step is shown in the listing \ref{lst:train_step_gan}.
+\begin{listing}
+\begin{minted}{python}
+def train_step(self, data):
+        x, y, y_mask = data
+        batch_size = tf.shape(x)[0]
+
+        y_fake = self.generator(x)
+
+        # Discriminator training
+        discriminator_input = tf.concat([y_fake, y], axis=0)
+        fake_labels = tf.zeros((batch_size, 1))
+        true_labels = tf.ones((batch_size, 1))
+        labels = tf.concat([fake_labels, true_labels], axis=0)
+        labels += 0.15 * tf.random.uniform(tf.shape(labels))
+
+        with tf.GradientTape() as tape:
+            y_pred = self.discriminator(discriminator_input)
+            d_loss = self.loss_fn(labels, y_pred)
+
+        grads = tape.gradient(d_loss, self.discriminator.trainable_weights)
+        self.d_optimizer.apply_gradients(
+            zip(grads, self.discriminator.trainable_weights))
+
+        # Generator training
+        misleading_labels = tf.ones((batch_size, 1))
+
+        with tf.GradientTape() as tape:
+            y_pred = self.discriminator(self.generator(x))
+            g_loss = self.loss_fn(misleading_labels, y_pred)
+
+        grads = tape.gradient(g_loss, self.generator.trainable_weights)
+        self.g_optimizer.apply_gradients(
+            zip(grads, self.generator.trainable_weights))
+
+        return {'d_loss': d_loss, 'g_loss': g_loss}
+\end{minted}
+\caption{Custom Tensorflow 2 train step method for training a GAN network}
+\label{lst:train_step_gan}
+\end{listing}
 
 The discriminator architecture reassembles a common binary classifier with convolutional and polling layers.
 A \textit{leaky ReLu (rectified linear unit)} was used as an activation function.
@@ -276,12 +316,12 @@ Early stopping helps to avoid overfitting and provides a more rational stop cond
 Training history of the simple convolutional and the encoder--decoder network is presented in the figure \ref{fig:simple-encoder-decoder-train-hist}.
 The subfigures show the simultaneous decrease of training and validation loss.
 The decreasing loss curves reassemble an exponential decay function, which is a sign of proper training.
-\begin{sidewaysfigure}
-    \begin{subfigure}{0.5\textwidth}
+\begin{figure}
     \hfill
+    \begin{subfigure}{\textwidth}
         \centering
         \begin{tikzpicture}
-			\begin{axis}[grid=major, grid style={dashed}, xlabel=Epoch, ylabel=Loss]
+			\begin{axis}[grid=major, grid style={dashed}, width=12cm, height=8cm, xlabel=Epoch, ylabel=Loss]
 			\addlegendentry{Simple convolutional}
 			\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/simple_conv-dvc-21-07-04-04_47_26-train_epoch_loss.csv};
 			\addlegendentry{Encoder--decoder}
@@ -291,10 +331,12 @@ The decreasing loss curves reassemble an exponential decay function, which is a 
         \caption{Training loss history}
     \end{subfigure}
     \hfill
-    \begin{subfigure}{0.5\textwidth}
+    \vskip\baselineskip
+    \hfill
+	\begin{subfigure}{\textwidth}
         \centering
         \begin{tikzpicture}
-			\begin{axis}[grid=major, grid style={dashed}, xlabel=Epoch, ylabel=Loss]
+			\begin{axis}[grid=major, grid style={dashed}, width=12cm, height=8cm, xlabel=Epoch, ylabel=Loss]
 			\addlegendentry{Simple convolutional}
 			\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/simple_loss-dvc-21-07-04-04_47_26-validation_epoch_loss.csv};
 			\addlegendentry{Encoder--decoder}
@@ -306,7 +348,7 @@ The decreasing loss curves reassemble an exponential decay function, which is a 
     \hfill
     \caption{Training history of the simple convolutional and encoder--decoder netowrks}
     \label{fig:simple-encoder-decoder-train-hist}
-\end{sidewaysfigure}
+\end{figure}
 
 Training a \textsc{gan} can pose a significant challenge when stopping condition is taken into consideration.
 More ordinary networks utilize early stopping mechanism on the validation dataset to limit the number of training epochs, as it was described previously.
@@ -325,7 +367,7 @@ The model from the epoch 94, with the highest SSIM validation score, was chosen 
 \begin{figure}
     \centering
     \begin{tikzpicture}
-			\begin{axis}[width=0.75\linewidth, height=10cm, grid=major, grid style={dashed}, xlabel=Epoch, ylabel=Loss]
+			\begin{axis}[width=0.75\linewidth, width=12cm, height=10cm, grid=major, grid style={dashed}, xlabel=Epoch, ylabel=Loss]
 			\addlegendentry{Discriminator}
 			\addplot+[mark=none] table [x=step, y=value, col sep=comma] {data/gan-dvc-21-07-04-05_55_06-train-epoch_d_loss.csv};
 			\addlegendentry{Generator}
@@ -434,11 +476,38 @@ Visual results also look well, low--resolution images resemble high--resolution 
 \section{Implementation details}
 As stated before, all networks were implemented in \textit{Python} using \textit{Tensorflow 2} library.
 The built--in Keras interface offers several ways of building models; the most flexible one is called \textit{model subclassing}.
-This approach enables using binary masks during training.
+This approach enables using binary masks during training, thanks to possibility to overwrite the fitting method.
+A custom train step with masking capability is shown in the listing \ref{lst:train_step_masking}.
+\begin{listing}
+\begin{minted}{python}
+def train_step(self, data):
+    x, y, y_mask = data
+
+    with tf.GradientTape() as tape:
+        y_pred = self(x, training=True)
+        if self._use_lr_masks:
+            y_pred = tf.boolean_mask(y_pred, y_mask)
+            y = tf.boolean_mask(y, y_mask)
+        loss = self.compiled_loss(
+            y, y_pred, regularization_losses=self.losses)
+
+    trainable_vars = self.trainable_variables
+    gradients = tape.gradient(loss, trainable_vars)
+    self.optimizer.apply_gradients(zip(gradients, trainable_vars))
+    self.compiled_metrics.update_state(y, y_pred)
+        return {m.name: m.result() for m in self.metrics}
+\end{minted}
+\caption{Custom train step method with masking capabilites}
+\label{lst:train_step_masking}
+\end{listing}
+
+
 Model subclassing involves inheritance to implement custom training loops for Tensorflow models.
 The simple convolutional and endcoder--decoder networks utilize this kind of model instantiation.
 The GAN model uses a mixture of subclassing and \textit{Sequential API} which defines the model in a declarative way.
 The two components of GAN---the generator and the discriminator are instantiated using the sequential approach, then they are combined into one using model subclassing.
+A custom inference preview callback was implemented to enhance the training process.
+Every training epoch a preview of inference on validation data is saved to a file.
 
 \textit{Tensorboard} is a package accompanying Tensorflow that provides a convenient interface for training supervision.
 It runs as a web server that displays a web page with the live progress of training in the form of interactive plots.

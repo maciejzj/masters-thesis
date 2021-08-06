@@ -1,4 +1,12 @@
+This chapter provides a detailed plan of the proposed work and rationale for chosen methods and technologies.
+A subset of super-resolution and augmentation techniques is chosen to include in the course of the work.
+Based on the selection, an experiment plan is laid out.
+A brief description of utilized tools, technologies and methodology to perform deep learning trainings is included.
+
 \section{Selection of data types and augmentation techniques}
+Various data types in the filed of super-resolution and approaches to data augmentation were introduced in Chapters \ref{ch:introduction} and \ref{ch:analysis}.
+A subset of possible techniques should be chosen to determine the scope of the experiments.
+
 \subsection{Data types in super--resolution}
 The introductory chapters provide a general overview of super--resolution, data augmentation mechanism and types of satellite imagery.
 To lay out a plan of experiments, a subset of selected techniques should be defined.
@@ -39,7 +47,7 @@ A selection of approaches to be taken into account in this work has been made an
 The choice is rather arbitrary and aims to cover the most common, yet uncomplicated variants of data generation.
 Thus, it was decided to perform data augmentation for mulit--image super--resolution with simulated data with deep learning and resizing algorithms.
 
-\subsection{Data augmentation techniques and appproaches}
+\subsection{Data augmentation techniques and approaches}
 \subsubsection{Augmentation via deep learning}
 Augmentation with deep learning techniques is the key point of this work.
 In the subsequent chapters three augmentation architectures with varying level of complexity are introduced.
@@ -80,6 +88,7 @@ To clarify the demands for specific datasets can be listed as:
 \end{enumerate}
 
 \subsubsection{Proba--V as an augmentation training dataset}
+\label{sec:probav}
 The \textit{Proba--V} dataset \cite{esa-proba} can be used to fill the first two requirements.
 It contains images taken during the \textit{Proba--Vegetation} satellite mission launched by the \textit{European Space Agency} in 2013.
 The dataset contains imagery taken in multiple spectral bands.
@@ -122,7 +131,6 @@ An example of Proba--V image with a binary mask designating clouds is shown in t
     \label{fig:proba_sample_mask}
 \end{figure}
 
-
 \subsubsection{Sentinel--2 as a super--resolution training dataset}
 The super--resolution training part of the data demands can be met by utilizing \textit{Sentinel--2} dataset \cite{esa-sentinel}.
 Contrary to Proba, it doesn't feature high and low--resolution scenes, for this reason, it suits the role of the dataset to undergo data generation process.
@@ -133,7 +141,7 @@ Since it was decided not to include multispectral super--resolution only band ei
 A sample image from Sentinel--2 dataset is shown in the figure \ref{fig:sentinel_sample}.
 \begin{figure}
 	\centering
-    \includegraphics[]{sentinel_sample}
+    \includegraphics{sentinel_sample}
     \caption{Sample image from \textit{Sentinel--2 dataset} (eight band)}
     \label{fig:sentinel_sample}
 \end{figure}
@@ -174,6 +182,7 @@ Tensorflow supports GPU acceleration via \textit{Nvidia CUDA} libraries, which i
 
 The image manipulation tasks are performed using \textit{SciKit--image} library which offers a variety of IO functions, transformations and analysis tools.
 \textit{Matplotlib}, another wide--spread Python library was used to create plots and heatmaps in the work.
+Alongside SciKit--image, \textit{Pillow} was used for some image related operations (mainly for resizing images with specific interpolation modes).
 
 \textit{NumPy}, the most popular numerical calculations library was chosen as a tool for matrix manipulation and mathematical operations.
 Arrays created with NumPy are stored in contiguous memory layout, which enables utilization of performance optimizations such as vectorized operations. 

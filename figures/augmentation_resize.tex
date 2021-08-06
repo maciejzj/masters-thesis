@@ -1,0 +1,24 @@
+\documentclass[tikz]{standalone}
+\usepackage[utf8]{inputenc}
+
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes}
+\usetikzlibrary{calc}
+
+\begin{document}
+
+\tikzstyle{cell} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black, align=center]
+\tikzset{arrow/.style={-stealth}}
+
+\begin{tikzpicture}[ampersand replacement=\&]
+    \node[cell, fill=blue!20] at (0,0) (S) {Single-resolution images\\(non--suitable for super-res training)};
+    \node[cell] at (0, -2) (R) {Image resizing};
+    \node[cell, fill=blue!20] at (0, -4) (P) {High and low--res pairs\\(suitable for super--res training)};
+    
+    \path[arrow]
+    (S) edge node[right] {Augment} (R)
+    (R) edge (P)
+    ;
+\end{tikzpicture}
+
+\end{document}

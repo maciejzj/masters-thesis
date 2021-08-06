@@ -54,11 +54,13 @@ Training history has been plotted to visualize the loss fitting progress.
 Having multiple datasets generated in different ways enables an alternative way of validating the training process.
 Instead of taking a subpart of the training set as validation data, one may use images generated in a different way.
 Such a technique may help to investigate the generalization capabilities of the super--resolution network.
-The datasets created using the simple convolutional network and resizing algorithm were used for the cross validation.
+The dataset created using the simple convolutional network and resizing algorithm were used for the cross validation.
 In each of them, one set was used for fitting and the other was used for validation.
 This time the increasing validation loss indicates overfitting in early epochs, compared to previous trainings.
+A small raise in validation loss is visible for over ten epochs before the training was stopped.
+In this case, best weights were saved nearly three times earlier than during the non--cross--validated training. 
 This may indicate that the vast part of the fitting process does not contribute to overall generalization capability of the super--resolution network.
-The cross--validated trainings were stopped earlier; since only weights for the epoch with the best validation score are saved, it is pointless to run longer fittings.
+The cross--validated training is stopped earlier; since only weights for the epoch with the best validation score are saved, it is pointless to run longer fittings.
 Figure \ref{fig:highres-net-training-loss} shows the loss history for all discussed HighRes--net trainings, figure \ref{fig:highres-net-training-validation} presents validation loss improvement.
 \begin{figure}
     \centering
@@ -116,7 +118,37 @@ The \textit{cPSNR} score was used as the super--resolution evaluation metric.
 
 The best results are observed on the diagonal of the table, which means that the algorithm works best on test data created in the same way as training data for a given model.
 This result is expected and indicates that no gross mistakes were made in the course of the work.
-\begin{sidewaystable}
+A visual demonstration of such an evaluation can be seen in the figure \ref{fig:highresnet-test-visual}.
+An example of image upscaling with bicubic interpolation was included in the figure as a reference point.
+In this case HighRes--net was trained on the dataset created by simple convolutional network and evaluated on the test subpart of the same dataset.
+\begin{figure}[p]
+    \centering
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{highresnet_test_lr}
+        \caption{One of nine low--resolution images}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{highresnet_test_sr}
+        \caption{Super--resolution reconstruction of the scene}
+    \end{subfigure}
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{highresnet_test_bicubic}
+        \caption{Upscaling to high--resolution with bicubic interpolation}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{highresnet_test_hr}
+        \caption{Real--life high--resolution picture of the scene}
+    \end{subfigure}
+    \caption{An example on evaluation of augmented dataset; both the training and test data were generated using simple convolutional network}
+    \label{fig:highresnet-test-visual}
+\end{figure}
+\begin{table}
 \caption{Evaluation of super--resolution training on different test sets}
 \label{tab:super-res-results}
 \begin{adjustbox}{center}
@@ -134,47 +166,21 @@ Bicubic                      &  35.78 & 28.96 & 24.55 & 25.80 &  35.26 \\
 Simple convolutional                  & 33.69 & 36.15 & 27.16 & 29.83 & 33.67  \\
 Encoder--decoder             & 31.72 & 31.78 & 34.43 & 30.22 & 31.76 \\
 GAN                          & 28.63 & 28.63 & 27.27 & 35.72 &  30.28 \\
-Artifacts on real Sentinel--2 & yes & yes  & yes & yes & no  \\
 Proba--V                      & 43.36 & 42.02 & 40.43 & 40.91 & 43.51  \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
-\end{sidewaystable}
+\end{table}
+
 As stated before, the results on the Sentinel--2 real--life image were evaluated visually by observing artifacts in the images.
-The figure \ref{fig:sentinel-2-real-artifacts-simple-conv} shows artifacts presence on test image for networks trained on augmented data with and without cross--validation.
-The artifacts take form of a mosaic--like overlay or checkerboard effect distorting the image, especially in high frequency areas.
-The cross--validated model that was stopped in the earlier epoch shows less visible artifacts.
-The same observation can be made looking at the figure \ref{fig:sentinel-2-real-artifacts-bicubic}, which shows the same phenomenon for the training set created using bicubic interpolation.
-These two observations are marked in the results table \ref{tab:super-res-results}.
+This test on data with different GSD proves some issues with data generalization.
+Some mosaic or checkerboard--like artifacts can be observed on the super--resolved images.
+An example of such a phenomenon (generated by the best performing network trained on bicubic data with cross--validation) can be observed in the figure \ref{fig:sentinel-real-artifacts}.
 \begin{figure}
-    \begin{subfigure}[t]{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{example-image}
-        \caption{Trained without cross--validation}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[t]{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{example-image}
-        \caption{Trained with cross--validation on data created by bicubic interpolation}
-    \end{subfigure}
-    \caption{Artifacts presence on Sentinel real--life data for network trained on dataset augmented with simple convolutional network}
-    \label{fig:sentinel-2-real-artifacts-simple-conv}
-\end{figure}
-\begin{figure}
-    \begin{subfigure}[t]{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{example-image}
-        \caption{Trained without cross--validation}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[t]{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{example-image}
-        \caption{Trained with cross--validation on data augmented with simple convolutional network}
-    \end{subfigure}
-    \caption{Artifacts presence on Sentinel real--life data for network trained on dataset created by bicubic interpolation}
-    \label{fig:sentinel-2-real-artifacts-bicubic}
+	\centering
+    \includegraphics[width=0.7\textwidth]{sentinel_real_artifacts}
+    \caption{An example of artifacts phenomenon on the Sentinel--2 real data}
+    \label{fig:sentinel-real-artifacts}
 \end{figure}
 
 The results in the table \ref{tab:super-res-results} can be summarized in the following statements:
@@ -183,4 +189,5 @@ The results in the table \ref{tab:super-res-results} can be summarized in the fo
 	\item The different deep learning architectures give fairly similar results, although the simplest one works best.
 	\item At the moment, the bicubic interpolation gives slightly better results, possible reasons for that and suggestions of improvement are included in the summary.
 	\item The cross--validation proves that all training are prone to overfitting to the data generation techniques. Early stopping based on different datasets can leads to this conclusion.
+	\item Generalization capabilities of the networks--trained on synthetic data poses a problem. Artifacts on real data can be observed.
 \end{itemize}
