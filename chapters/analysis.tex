@@ -119,7 +119,31 @@ In the case of super--resolution processing, the forward skips can be viewed as 
 This information can be used during the decoding step in the encoder--decoder scheme.
 
 \subsection{Generative Adversarial Networks}
-%TODO: move part here
+\label{sec:gans-overview}
+In recent years, a new approach to training generative neural networks has emerged.
+The traditional supervised learning described in the previous sections consists in providing the network with an input and comparing the generated output with a ground truth to compute loss.
+The \textsc{gan}---\textit{generative adversarial network} approach requires creating two networks, a \textit{generator} and \textit{discriminator} \cite{goodfellow-2014-gans}.
+The former is tasked with generating data, while the latter learns to differentiate images created by the generator from real ones.
+In the \textsc{gan} scheme the discriminator learns like a traditional binary classifier---it is provided with real and generated images, which are labeled accordingly.
+Then discriminator loss is computed using standard classification metrics like \textit{binary cross--entropy}.
+However, the generator learns in a more unique way; it creates an output image that is fed into a discriminator.
+The generator loss is calculated depending on how well it produces data that may be classified as \textit{real} by a discriminator.
+If the generated image is recognized as a \textit{fake} one, it receives a big penalty in the form of a large loss.
+The inner-workings of a \textsc{gan} network can be visualized in the form of a graph, as in the figure \ref{fig:gan-training}.
+\begin{figure}
+    \centering
+    \input{figures/gan_training}
+    \caption{Schematic of \textsc{gan} network inner--workings}
+    \label{fig:gan-training}
+\end{figure}
+
+\textsc{Gan}s can have many variations, the most common type utilizes unsupervised or semi--supervised data generation.
+This means that in many GANs the generator can be fed with values from proper random distribution (often called \textit{latent space}) to generate new data.
+An ability to create images without direct input is a great advantage of adversarial networks.
+
+In general, adversarial network architectures provide great generative capabilities.
+For this reason, GANs are widely used for data augmentation and creation \cite{bulat-2018-supergan, sundaram-2021-gangen, shorten-2019-augmentation, perez-2017-augmentation}.
+A variant of GAN architecture is later used in this work for creating super-resolution training data in Chapter \ref{ch:augmentation}.
 
 \subsection{Measuring quality of image--generating neural networks}
 

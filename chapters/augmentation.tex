@@ -171,25 +171,13 @@ The detailed description of the network is shown in the table \ref{tab:autoencod
 \end{table}
 
 \subsection{Generative adversarial network}
-In recent years, a new approach to training generative neural networks has emerged.
-The traditional supervised learning described in the previous sections consists in providing the network with an input and comparing the generated output with a ground truth to compute loss.
-The \textsc{gan}---\textit{generative adversarial network} approach requires creating two networks, a \textit{generator} and \textit{discriminator} \cite{goodfellow-2014-gans}.
-The former is tasked with generating data, while the latter learns to differentiate images created by the generator from real ones.
-In the \textsc{gan} scheme the discriminator learns like a traditional binary classifier---it is provided with real and generated images, which are labeled accordingly.
-Then discriminator loss is computed using standard classification metrics like \textit{binary cross--entropy}.
-However, the generator learns in a more unique way; it creates an output image that is fed into a discriminator.
-The generator loss is calculated depending on how well it produces data that may be classified as \textit{real} by a discriminator.
-If the generated image is recognized as a \textit{fake} one, it receives a big penalty in the form of a large loss.
-
-\textsc{Gan}s can have many variations, the most common variant utilizes unsupervised or semi--supervised data generation.
-A great advantage of this kind of network is the ability to create images without direct input.
-Usually a \textsc{gan} generator creates output from random values.
-These values are randomly initiated inside proper \textit{latent space}.
-However, adversarial networks can also work in fully--supervised way.
+The general idea of an adversary network was covered in section \ref{sec:gans-overview}.
+As mentioned, models with adversarial loss can be used in numerous data generation scenarios.
+Usually the \textsc{gan} generator creates output from random values.
+However, adversarial networks can also work in a fully--supervised way.
 In this work a \textsc{gan} is proposed that transforms high--resolution images to low--resolution, with loss calculated in regard to the discriminator's judgements.
-Such networks are often called picture--to--picture \textsc{gan}s.
 An algorithm for training such a network is provided in the pseudocode listing \ref{alg:gan-training}.
-One further optimization can be applied to \textsc{gan}---usually better results are achieved if small noise is applied to the labels.
+One further optimization can be applied to \textsc{gan}---often better results are achieved if small noise is applied to the labels \cite{sonderby-2016-gannoise}.
 \begin{algorithm}
 \caption{\textsc{Gan} training flow}
 \label{alg:gan-training}
@@ -206,13 +194,7 @@ One further optimization can be applied to \textsc{gan}---usually better results
 	\STATE $ optimize_g(loss_g) $
 \end{algorithmic}
 \end{algorithm}
-The fitting process of a \textsc{gan} network can also be visualized in the form of a graph, as presented in the figure \ref{fig:gan-training}.
-\begin{figure}
-    \centering
-    \input{figures/gan_training}
-    \caption{Schematic of \textsc{gan} network inner--workings}
-    \label{fig:gan-training}
-\end{figure}
+
 The final Tensorflow 2 implementation of the custom training loop step is shown in the listing \ref{lst:train_step_gan}.
 \begin{listing}
 \begin{minted}{python}

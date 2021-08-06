@@ -14,12 +14,12 @@
     \node[rectangle, rounded corners, draw, fill=blue!20, minimum height=1cm] at (0,0) (G) {\textsc{Generator}};	
     \node[rectangle, rounded corners, draw, minimum height=1cm] at (3,0) (S1) {\textsc{Sample}};
     
-    \node[text width=0.5cm] at (0.75,3) (Y) {$ \mathbf y_{gt} $};		 
+    \node[text width=0.75cm] at (0.75,3) (Y) {$ \mathbf y_{real} $};		 
     \node[rectangle, rounded corners, draw, minimum height=1cm] at (3,3) (S2) {\textsc{Sample}};
     
     \node[rectangle, rounded corners, draw, fill=blue!20, minimum height=1cm] at (6,1.5) (D) {\textsc{Discriminator}};
     
-    \node[text width=2cm] at (10,1.5) (O) {\textsc{Real/Fake Prediction}};
+    \node[text width=3cm] at (10,1.5) (O) {\textsc{Real/Fake Prediction}};
      
     \path[arrow] (X) edge (G)
     (G) edge (S1)
