@@ -1,21 +1,34 @@
 In the course of the work various approaches to data augmentation were explored.
 Three different deep learning architectures were introduced and compared with the traditional approach.
-The augmentation networks were trained on real--life data and used to export new datasets to fit the super--resolution algorithm.
-Then the super--resolution models were evaluated on various synthetic and real--file images; both in a numerical and visual way.
-The cross--validation based approach to training supervision confirmed to be valuable.
-The deep learning based--methods proved to be of utility, yet slightly below what would be expected since they didn't surpass the bicubic interpolation approach.
+The augmentation networks were trained on real-life data and used to generate new datasets to fit the super-resolution algorithm.
+The mid-process evaluation step was performed to investigate levels of similarity between synthetic and real-life data.
+The generated data resembled real Proba-V images with the SSIM score over 0.9.
+The artificial datasets were used to train the HighRes-net neural network model.
+Then, the super-resolution models were evaluated on various synthetic and real-life images; both in a numerical and visual way.
+The cross-data-type-based validation approach to training supervision was confirmed to be valuable and possible thanks to the variety of the generated data.
+The network trained with this kind of validation mechanism was stopped earlier, yet scored better on the real-life Proba-V dataset.
+After visual investigation on the separate Sentinel-2 data, presence of checkerboard-like artifacts was noted.
+The deep learning based-methods proved to be of utility, yet slightly below what would be expected, since they did not surpass the bicubic interpolation approach for the real-life Proba-V test subset.
 There may be a variety of reasons for that to explore.
-Many possibilities were not explored in a full way; translations between low--resolution images may be investigated in a greater detail.
-Modeling them after distribution extracted from a real--world dataset may lead to enhanced results.
-The semi--simulated approach for data generation was not included in the scope of the work; however, it would be interesting to investigate this option in the future.
+However, the deep learning-based datasets were used to perform the cross-data-type validation scheme.
+
+The field of data augmentation and generation for super-resolution is yet to be further investigated in future research.
+Many possibilities were not explored in a full way; translations between low-resolution images may be investigated in greater detail.
+Modeling them after the distribution extracted from a real-world dataset may lead to enhanced results.
+The semi-simulated approach for data generation was not included in the scope of the work; however, it would be interesting to investigate this option in the future.
 Since the generalization capabilities remain an issue, more emphasis may be put on regularization.
 Adding more noise to augmented images may lead to less overfitting and artifacts generation.
+More trainings may be conducted on mixed datasets. 
+The possibility to create datasets that include images created in different ways remains open.
+The real-life images may be mixed with the synthetic ones (this approach would be similar to the traditional data augmentation approach).
+Better results could also be achieved by connecting augmentation and super-resolution networks into one.
+Such a network would generate data on the fly during the training process like in \cite{bulat-2018-supergan}.
 
-The observations connected with the cross--validation approach are worth being noticed.
-Early stopping training based on this approach leads to slightly better results compared to normal trainings.
+The observations connected with the cross-data-type-validation approach are worth being noticed.
+Early stopping training based on this approach leads to slightly better results compared to the normal trainings.
 This indicates a greater overfitting problem in regard to the data generation method.
-The robust data augmentation problem remains open, however valuable observations about the issue of super--resolution generalization has been made.
+The robust data augmentation problem remains open; however, valuable observations about the issue of super-resolution generalization have been made.
 
-There is a value in the opportunity for further development of the work and more detailed investigation.
-Achieving robustness and greater generalization of super--resolution techniques through better data augmentation is an important step towards productization of this technique.
-A super--resolution algorithm independent of satellite data type would be useful in the image  processing pipeline during aerospace missions, remote sensing tasks and Earth observations.
+There is an opportunity for further development of the work and a more detailed investigation.
+Achieving robustness and greater generalization of super-resolution techniques through better data augmentation is an important step towards the productization of this technique.
+A super-resolution algorithm independent of satellite-data type would be useful in image processing pipelines during aerospace missions, remote sensing tasks, and Earth observations.

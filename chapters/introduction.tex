@@ -1,191 +1,211 @@
-\section{Super--resolution technology}
-Super--resolution is a~group of techniques that upscale images and improve
+\section{Super-resolution technology}
+Super-resolution is a~group of techniques that upscale images and improve
 their quality.
-Such an algorithm can be treated as a function that takes an image and returns
-it with a resolution \textit{n} times larger.
-Algorithms taken into account in the process usually upscale images two or
-four times.
-In this study, due to the size of the available satellite images, the ratio of three was used.
+A super-resolution algorithm can be treated as a function that takes an image and returns
+it with a resolution \textit{n} times larger \cite{wang-2019-srsurvey}.
+Algorithms that were taken into account in the process usually upscale images two or four times.
+In this study, due to the size of images in the available datasets (Proba-V \cite{esa-proba} and Sentinel-2 \cite{esa-sentinel}, more on the utilized data can be found in Chapter \ref{ch:scope}), a ratio of three was used.
 
-It is important to distinguish between super--resolution and traditional
+It is important to distinguish between super-resolution and traditional
 upscaling algorithms.
-The latter use interpolation to enlarge images; however, they hardly improve the
-quality of the image.
-The intent of super--resolution is not only to upscale images, but to improve
-the quality and detailing.
+The latter use interpolation to enlarge pictures; however, they hardly improve the image quality.
+The intent of super-resolution is not only to upscale images but to improve
+the quality and details.
 Nowadays, such an effect is achieved using machine learning, precisely---deep
 learning---a technology that utilizes multi-layered neural networks trained
 with large datasets.
-Deep learning networks that process image data usually utilize convolutional
+Deep learning networks that process image data usually include convolutional
 layers.
-Such layers contain a number of image filters whose weights are tuned during training.
-Like all the rest of machine learning algorithms, the deep learning based
+Such layers contain a number of image filters whose weights are tuned during the training process.
+Like all the rest of the machine learning algorithms, the deep learning-based
 super-resolution works in a statistical manner.
 This means that the extra details created during the image enhancement process
-state an imaginary approximation of image features.
+state an imagined approximation of image features.
 It is important to keep the statistical nature of machine learning algorithms
 in mind.
 
-Two main kinds of super--resolution algorithms can be outlined:
+Two main kinds of super-resolution algorithms can be outlined:
 \textit{one-to-one} and \textit{many-to-one}.
-The first one is the obvious approach, where one low-resolution image is
-translated into a high-resolution one.
+The first one is the obvious approach where a single low-resolution image is
+translated into a high-resolution picture.
+The second method is to combine multiple low-resolution images into a single high-resolution one.
 The first technique is often called \textit{single-image super-resolution} and the latter \textit{multi-image super-resolution}.
 
-Super-resolution imaging is a technique relevant in the fields of satellite imaging
-remote sensing and geoscience.
-The most common reason for image enhancement is for aesthetic reasons.
-This application is viable in satellite imaging; however, super--resolution can
+Super-resolution imaging is a technique relevant in the fields of satellite imaging,
+remote sensing, and geoscience.
+This work focuses on the application of super-resolution technology to this type of data.
+The most common cause for image enhancement is aesthetics.
+This application is viable in satellite imaging; however, super-resolution can
 lead to other practical advantages.
 Image enhancing techniques can be used as a preprocessing step in remote
 sensing pipelines.
-For this reason super-resolution can be especially useful when considered in
+For this reason, super-resolution can be especially useful when considered in
 the context of satellite imagery.
-A visual demonstration of modern super-resolution applied on satellite images can be seen in Figures \ref{fig:super-res-fields-demo} and \ref{fig:super-res-dots-demo}.
-In these examples a set of nine low--resolution images per each scene was super--resolved into a single high--resolution one.
+Multi-image super-resolution in satellite applications can be treated as a data fusion operation.
+A visual demonstration of modern super-resolution applied on satellite images can be seen in Figure \ref{fig:super-res-demo}.
+In these examples, a set of nine low-resolution images per scene was super-resolved into a single high-resolution one.
 A sample of those nine images is shown in the comparison.
-\begin{figure}[p]
+\begin{figure}
     \centering
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=\textwidth]{high_res_net_demo_fields_lr}
-        \caption{One of nine low--resolution images}
+        \caption{One of the nine low-resolution images of a scene}
+        \label{fig:super-res-demo-lra}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=\textwidth]{high_res_net_demo_fields_sr}
-        \caption{Super--resolution reconstruction of the scene}
+        \caption{Super-resolution reconstruction of the scene}
+        \label{fig:super-res-demo-sra}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=\textwidth]{high_res_net_demo_fields_hr}
-        \caption{Real--life high--resolution picture of the scene}
+        \caption{Real-life high-resolution picture of the scene}
+        \label{fig:super-res-demo-hra}
     \end{subfigure}
-    \caption{A demonstration of super--resolution technique, where nine low--resolution satellite images of a farming area are turned into one  high--resolution image (the example comes from the HighRes--net model applied on the Proba-V dataset \cite{deudon-2020-highresnet})}
-    \label{fig:super-res-fields-demo}
-\end{figure}
-\begin{figure}[p]
     \centering
+    \vskip\baselineskip
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=\textwidth]{high_res_net_demo_dots_lr}
-        \caption{One of nine low--resolution images}
+        \caption{One of the nine low-resolution images of a scene}
+        \label{fig:super-res-demo-lrb}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=\textwidth]{high_res_net_demo_dots_sr}
-        \caption{Super--resolution reconstruction of the scene}
+        \caption{Super-resolution reconstruction of the scene}
+        \label{fig:super-res-demo-srb}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
         \includegraphics[width=\textwidth]{high_res_net_demo_dots_hr}
-        \caption{Real--life high--resolution picture of the scene}
+        \caption{Real-life high-resolution picture of the scene}
+        \label{fig:super-res-demo-hrb}
     \end{subfigure}
-    \caption{A demonstration of super--resolution technique, where nine low--resolution satellite images of a barren landscape are turned into one  high--resolution image (the example comes from the HighRes--net model applied on the Proba-V dataset \cite{deudon-2020-highresnet}}
-    \label{fig:super-res-dots-demo}
+    \captionsetup{justification=justified}
+    \caption{A demonstration of super-resolution technique, where nine low-resolution satellite images of different landscapes are turned into one  high-resolution image; \ref{fig:super-res-demo-lra}, \ref{fig:super-res-demo-sra}, and \ref{fig:super-res-demo-hra} show pictures of a rural area; \ref{fig:super-res-demo-lrb}, \ref{fig:super-res-demo-srb}, and \ref{fig:super-res-demo-hrb} present pictures of a barren landscape with silos (these examples comes from the HighRes-net model applied on the Proba-V dataset) \cite{deudon-2020-highresnet}}
+    \label{fig:super-res-demo}
 \end{figure}
+
+Deep-learning based image-enhancing algorithms may be domain specific.
+Different model architectures and data are used to create super-resolution algorithms for satellite imagery and human faces.
 
 \section{Purpose of data augmentation and available solutions}
 \label{sec:augmentation-introduction}
-\textit{Data augmentation} is a suite of techniques that enhance the size and quality of datasets used for training machine learning models \cite{perez-2017-augmentation}.
-Deep learning, utilized in the modern super--resolution techniques, requires a
+\textit{Data augmentation} is a suite of techniques that enhance the size and quality of datasets used for training machine learning models \cite{perez-2017-augmentation} \cite{mikolajczyk-2018-augmentation}.
+Deep learning, utilized in the modern super-resolution solutions, requires a
 lot of data to train successfully.
-Increase in quality and size of a dataset can lead to far better results when
+An increase in the quality and size of a dataset can lead to far better results when
 training a neural network.
-This is why data augmentation techniques are often used to improve performance
-of deep networks.
-Data augmentation incorporates various transformation to improve, multiply or
+This is why data augmentation techniques are often used to improve the performance of deep networks.
+Data augmentation incorporates various transformations to improve, multiply, or
 generate training data.
 This process often multiplies data by modifying existing examples; however, more advanced generation techniques can produce fully artificial datasets.
 Completely new data created in the augmentation process is often called \textit{synthetic} \cite{nikolenko-2021-synthetic}.
 Classical augmentation techniques utilize simple operations like image resizing, flipping, mirroring, recoloring, etc.
-However, more advanced approach can be taken to generate data.
+However, a different approach can be taken to generate data.
 It is possible to train deep neural networks to perform data augmentation
 transformations.
-This approach can be especially useful when a dataset is available that it is
-too small to train the desired network.
+This approach can be especially useful when the available dataset is too small to train the desired network.
 The small dataset can be used to fit a simpler network that is taught to create new data, based on the existing training set.
 Then, this small augmentation network can be used to generate more data for the
 original model to learn.
-With deep learning capabilities networks can learn to multiply, transform or
+With deep learning capabilities, networks can learn to multiply, transform, or
 even generate data without direct input.
+
+Generating more diverse training datasets is often used as a method of \textit{regularization}.
+Regularization methods prevent overfitting machine learning models to the training datasets which leads to better generalization capabilities \cite{kukacka2017regularization}.
+The problem of overfitting and the role of data augmentation in preventing it are covered in more detail in Sections \ref{sec:neural-nets} and \ref{sec:data-augmentation-in-ml}.
 
 \section{Aim of the work and motivation}
 The objective of this work is to create a set of augmentation networks for
-enhancing super--resolution training data.
-Subsequent chapters will present considered super--resolution architectures
+enhancing super-resolution training data.
+Subsequent chapters will present the considered super-resolution architectures
 with more details and propose neural network models for data augmentation.
-The task of the augmentation algorithms is to create low--resolution images for
-high--resolution ones, to make training pairs for super--resolution networks. 
+The task of the augmentation algorithms is to create low-resolution images from high-resolution ones, to make training pairs for super-resolution networks. 
 
-The nature of super--resolution technology and satellite imagery imposes certain
-ways in which data augmentation should be applied to the training data.
-Single image super--resolution is trained using pairs of high and low-resolution images.
+The nature of super-resolution technology and satellite imagery imposes certain
+ways in which augmentation should be applied to the training data.
+Single image super-resolution is trained using pairs of high and low-resolution images.
 On the other hand, multi-image super-resolution learns from examples of one high-resolution image bounded with multiple low-resolution ones.
 These requirements render compiling training sets a challenge, especially in the
 field of satellite imagery.
-Despite the fact that single satellite images are widely available, it is difficult to find collections containing pairs of the same scenes with different resolutions
+Even though single satellite images are widely available, it is difficult to find collections containing pairs of the same scenes with different resolutions.
 
-Data augmentation and generation techniques may be the solution to the scarcity of the satellite data suitable for super-resolution trainings.
+Data augmentation and generation techniques may be the solution to the scarcity of satellite data suitable for super-resolution trainings.
 Pairs of high and low-resolution images can be created from single-image satellite datasets by resizing existing photographs.
-A set of training pairs can be created by downscaling high--resolution images.
-In the case of many--to--one networks, a single high--resolution image can be
-multiplied and shifted before shrinking to create more low--resolution images.
+A set of training pairs can be created by downscaling high-resolution images.
+In the case of many-to-one networks, a single high-resolution image can be
+multiplied and shifted before shrinking to create more low-resolution images.
 Such a technique may work well; however, it infuses the data with information
 about resizing algorithms.
-The way high--resolution and low--resolution images relate in such a set
+The way high-resolution and low-resolution images relate in such a set
 depends on the interpolation algorithm (e.g., bicubic, bilinear,
-nearest, Lanczos).
+nearest-neighbor, Lanczos).
 The network trained on alike datasets will likely learn to invert given
 interpolation methods.
-This does not match exactly real--life scenarios, most images are not created
+This may not match exactly real-life scenarios where images are not created
 using resizing algorithms.
 
 However, another method of data augmentation based on deep learning is possible.
-Similarly to the super-resolution it requires pairs of real low and high--resolution
+Similar to the super-resolution trainings, it requires pairs of real low and high-resolution
 images of the same scene, taken by cameras of different quality.
-The main idea of this project is to use a dataset of real--life data to
+The main idea of this project is to use a dataset of real-life data to
 train an augmentation network.
-Such a network would learn to create low--resolution images for
-high--resolution, without imprinting resampling algorithms mechanisms into the
+Such a network would learn to create low-resolution images for
+high-resolution ones, without imprinting resampling algorithms mechanisms into the
 data.
-The relation between low and high--resolution images in this augmented
-dataset would resemble the relation between same image taken by cameras of
+The relation between low and high-resolution images in this augmented
+dataset would resemble the relation between the same image taken by cameras of
 different quality.
 The deep learning approach to data augmentation has proven beneficial in other fields of super-resolution imaging \cite{bulat-2018-supergan}.
 
 The augmentation neural network can be then used on other satellite image
-datasets to generate training data pairs for super--resolution.
-Different data, models and generation techniques can be used to achieve desired
+datasets to generate training data pairs for super-resolution.
+Different data, models, and generation techniques can be used to achieve desired
 results.
 Possible variations are discussed in the course of this work to improve
-super--resolution datasets.
+super-resolution datasets.
 For clarity, the different methods of data augmentation are illustrated in Figures \ref{fig:augmentation-resize} and \ref{fig:augmentation-deep-learn}.
 \begin{figure}
+\begin{subfigure}{\textwidth}
     \centering
     \input{figures/augmentation_resize}
-    \caption{Super-resolution data augmentation with resizing algorithms}
+    \caption{Super-resolution data augmentation with traditional resizing algorithms}
     \label{fig:augmentation-resize}
-\end{figure}
-\begin{figure}
+\end{subfigure}
+\vskip\baselineskip
+\begin{subfigure}{\textwidth}
     \centering
     \input{figures/augmentation_deep_learn}
     \caption{Super-resolution data augmentation with deep-learning}
     \label{fig:augmentation-deep-learn}
+\end{subfigure}
 \end{figure}
+Each of these starts with a dataset of single-resolution images.
+To train a super-resolution algorithm a set of high and low-resolution pairs is needed.
+Both of these methods create low-resolution counterparts for existing images to generate the training pairs.
+The approach based on traditional resizing algorithms creates missing low-resolution pictures by downsizing existing ones.
+However, with deep learning an existing set of high and low-resolution images is used to train the augmentation model.
+This model learns to downsize existing images.
+In a sense, the augmentation network learns to perform a task opposite to the super-resolution algorithm.
+Then the augmentation model can be used to shrink existing images and create low-resolution images to be eventually used in the super-resolution training.
 
 \section{Content outline}
-The consecutive chapters provide description of theoretical background of regarded topics, implementation of data augmentation networks and final evaluation.
+The consecutive chapters provide a description of the theoretical background of regarded topics, implementation of data augmentation networks, and final evaluation.
 The detailed content of the chapters is as follows:
 \begin{description}
-	\item [Chapter \ref{ch:introduction}] (this chapter) broadly introduces topics of super-resolution and data augmentation. Set the main goal of the work.
-	\item [Chapter \ref{ch:analysis}] provides an overview of satellite imagery, explains topics of deep learning, super-resolution, augmentation and image interpolation methods.
-	\item [Chapter \ref{ch:scope}] explains the specific goals of the work. Lays out the experiment plan. Provides rationale for chosen methods and tools.
-	\item [Chapter \ref{ch:augmentation}] presents main part of the work, contains data augmentation neural network architectures description.
-	\item [Chapter \ref{ch:sr-evaluation}] includes results of super-resolution training and evaluation of different datasets.
+	\item [Chapter \ref{ch:introduction}] (this chapter) broadly introduces topics of super-resolution and data augmentation. The main goal of this work is set.
+	\item [Chapter \ref{ch:analysis}] provides an overview of satellite imagery, explains topics of deep learning, super-resolution, augmentation, and image interpolation methods.
+	\item [Chapter \ref{ch:scope}] explains the specific goals of the work. This chapter lays out the experiment plan and provides a rationale for chosen methods and tools.
+	\item [Chapter \ref{ch:augmentation}] presents the main part of the work, contains data augmentation neural network architectures description.
+	\item [Chapter \ref{ch:sr-evaluation}] includes the results of super-resolution training and evaluation of different datasets.
 	\item [Chapter \ref{ch:summary}] summarizes the work and provides a commentary on the results.
 \end{description}

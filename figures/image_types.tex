@@ -13,29 +13,28 @@
 \begin{tikzpicture}[ampersand replacement=\&]
 	\node[cell, fill=blue!20] at (0,0) (D) {Data};
 	
-	\node[cell] at (0, 2) (FS) {Frequency spectrum};
-	\node[cell] at (-2.5, 4) (MB) {Multi--band};
-	\node[cell] at (2.5, 4) (SB) {Single--band};
+	\node[cell, fill=blue!20] at (0, 2) (FS) {Frequency spectrum};
+	\node[cell] at (-2.5, 4) (MB) {Multi-band};
+	\node[cell, fill=blue!20] at (2.5, 4) (SB) {Single-band};
 	
-	\node[cell] at (-4.5, -2) (MI) {Mulit--image};
-	\node[cell] at (4.5, -2) (SI) {Single--image};
+	\node[cell, fill=blue!20] at (-4.5, -2) (MI) {Multi-image};
+	\node[cell] at (4.5, -2) (SI) {Single-image};
 	
-	\node[cell] at (-8, -4) (SIM) {Simulated};
-	\node[cell] at (-4.5, -4) (SS) {Semi--simulated};
-	\node[cell] at (-1, -4) (RLM) {Real--life};
+	\node[cell, fill=blue!20] at (-8, -4) (SIM) {Simulated};
+	\node[cell] at (-4.5, -4) (SS) {Semi-simulated};
+	\node[cell, fill=blue!20] at (-1, -4) (RLM) {Real-life};
 	
 	\node[cell] at (2.75, -4) (SIS) {Simulated};
-	\node[cell] at (6.25, -4) (RLS) {Real--life};
+	\node[cell] at (6.25, -4) (RLS) {Real-life};
 	
-	\node[cell] at (0, -6.5) (SM) {Simulation method};
+	\node[cell, fill=blue!20] at (0, -6.5) (SM) {Simulation method};
 	
-	\node[cell] at (-2.5, -8.5) (T) {Traditional};
-	\node[cell] at (-5, -10.5) (IM) {Interpolation modes};
-	\node at (-2.5, -10.5) { $ \dots $ };
+	\node[cell, fill=blue!20] at (-2.5, -8.5) (T) {Traditional};
+	\node[cell, fill=blue!20] at (-5, -10.5) (IM) {Interpolation techniques};
+	\node at (-2, -10.5) { $ \dots $ };
 	
-	
-	\node[cell] at (2.5, -8.5) (DL) {Deep learning};
-	\node[cell] at (1, -10.5) (NA) {Network architectures};
+	\node[cell, fill=blue!20] at (2.5, -8.5) (DL) {Deep learning};
+	\node[cell, fill=blue!20] at (1, -10.5) (NA) {Network architectures};
 	\node at (3.75, -10.5) { $ \dots $ };
 
     \path[arrow]
@@ -49,9 +48,7 @@
     (MI) edge (RLM)
     (SI) edge (SIS)
     (SI) edge (RLS)
-    (SIM) edge (SM)
-    (SS) edge (SM)
-    (SIS) edge (SM)
+
     (SM) edge (T)
     (SM) edge (DL)
     (T) edge (IM)

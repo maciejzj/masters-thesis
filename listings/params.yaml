@@ -103,7 +103,7 @@ GAN:
       tensorboard: true
       modelcheckpoint: true
       save_best_only: false
-      # Earlystopping is currently not supported for GAN
+      # Earlystopping is not supported for GAN
       earlystopping: false
       stopping_delta: 0.0
       stopping_patience: 0

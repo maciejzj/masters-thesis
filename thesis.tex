@@ -4,6 +4,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{dsfont}
+\usepackage{fancyhdr}
+\usepackage{emptypage}
+\usepackage[table]{xcolor}
 
 % Document structure and layout
 \usepackage{pdfpages}
@@ -26,7 +29,10 @@
 
 % Extra features and enhancements
 \usepackage{cite}
+\usepackage[toc, acronym]{glossaries}
 % Tables
+\usepackage{multirow}
+\usepackage{nicematrix}
 \usepackage{booktabs}
 % Captions
 \usepackage[justification=centering]{caption}
@@ -39,7 +45,17 @@
 \usepackage[hidelinks]{hyperref}
 
 % Pgfplots configuration
+\pgfplotsset{compat=newest}
 \usepgfplotslibrary{statistics}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LO]{\nouppercase{\it\rightmark}}
+\fancyhead[RE]{\nouppercase{\it\leftmark}}
+\fancyhead[LE,RO]{\it\thepage}
+
+\glsenablehyper
+\makeglossaries
 
 \begin{document}
 \pagenumbering{gobble}
@@ -53,7 +69,7 @@
 
 % Introductory pages
 \begin{abstract}
-The aim of this work is to enhance super-resolution satellite imaging by using
+This work aims to enhance super-resolution satellite imaging by using
 data augmentation techniques based on deep learning algorithms.
 Super-resolution is a technology that enables upscaling images to a higher
 resolution with more refined details and improved quality.
@@ -61,20 +77,25 @@ Such image-enhancing techniques are nowadays undergoing rapid development
 thanks to advancements in deep learning and convolutional neural networks.
 Deep learning is an approach in which training data plays a key role in the
 outcome and quality of the solution.
-Size and quality of the dataset used to train super-resolution networks are
-crucial to achieve the best results.
+The size and quality of the dataset used to train super-resolution networks are
+crucial to achieving the best results.
 This is especially significant when working with satellite images, which are
 effortful to acquire in large numbers.
 Thus, when training a super-resolution network, it may be worth incorporating
 data augmentation techniques.
 Data augmentation is a process that intends to enlarge and improve training
-datasets for machine learning by transforming, multiplying or generating data.
-This process has been traditionally done using resampling techniques, however this work aims to use deep learning to generate datasets for training
-super-resolution algorithms.
-Following chapters provide an overview of modern super-resolution solutions
-and a proposal of a set of deep learning algorithms to enhance the training datasets.
-Results of the work are evaluated by testing super-resolution networks which
+datasets for machine learning by transforming, multiplying, or generating data.
+In the field of super-resolution, the data creation process has been traditionally done using resampling techniques; however, this work aims to use deep learning to generate the datasets for training super-resolution algorithms.
+The following chapters provide an overview of modern super-resolution solutions
+and a proposal of a set of deep learning algorithms to generate the training datasets.
+The results of the work are evaluated by testing super-resolution networks that
 were trained on the datasets created during the project.
+
+{
+  \vspace{1em}
+  \noindent
+  \textbf{\textit{Keywords:}} super-resolution, deep learning, data augmentation
+}
 \end{abstract}
 
 \tableofcontents
@@ -87,19 +108,19 @@ were trained on the datasets created during the project.
 \label{ch:introduction}
 \input{chapters/introduction}
 
-\chapter{Analysis of related work}
+\chapter{Analysis of the related work}
 \label{ch:analysis}
 \input{chapters/analysis}
 
-\chapter{Scope of the work}
+\chapter{Scope of work}
 \label{ch:scope}
 \input{chapters/scope}
 
-\chapter{Data augmentation with usage of deep learning}
+\chapter{Data augmentation with the usage of deep learning}
 \label{ch:augmentation}
 \input{chapters/augmentation}
 
-\chapter{Super--resolution training and evaluation}
+\chapter{Super-resolution training and evaluation}
 \label{ch:sr-evaluation}
 \input{chapters/evaluation}
 
@@ -111,6 +132,9 @@ were trained on the datasets created during the project.
     \input{chapters/appendices}
 \end{appendices}
 
+\input{glossary}
+\printglossary[type=\acronymtype]
+
 % Lists of objects
 \listoffigures
 \listoftables
@@ -118,8 +142,7 @@ were trained on the datasets created during the project.
 \listoflistings
 
 % Bibliography
-\nocite{*}
-\bibliographystyle{plplain}
+\bibliographystyle{plain}
 \bibliography{references}
 
 \end{document}

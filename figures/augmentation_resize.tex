@@ -11,9 +11,9 @@
 \tikzset{arrow/.style={-stealth}}
 
 \begin{tikzpicture}[ampersand replacement=\&]
-    \node[cell, fill=blue!20] at (0,0) (S) {Single-resolution images\\(non--suitable for super-res training)};
-    \node[cell] at (0, -2) (R) {Image resizing};
-    \node[cell, fill=blue!20] at (0, -4) (P) {High and low--res pairs\\(suitable for super--res training)};
+    \node[cell, fill=blue!20] at (0,0) (S) {Single-resolution images\\(not suitable for super-resolution training\\bacause high and low-resolution pairs are missing)};
+    \node[cell] at (0, -2) (R) {Image downsizing};
+    \node[cell, fill=blue!20] at (0, -4) (P) {Low-resolution images\\(bundled with the original images\\create high and low-resolution pairs\\for super-resolution training)};
     
     \path[arrow]
     (S) edge node[right] {Augment} (R)

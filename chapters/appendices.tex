@@ -1,10 +1,24 @@
 \chapter{Model and training parameters of the augmentation networks}
 \label{ch:appendix-params}
 As stated in the work the models and training process are parametrized by set o variables in a \textit{params.yaml} file.
-This file is supervised by Git and Dvc to ensure reproducibility and artifacts caching.
-Contents of the configuration file during the training of augmentation networks are presented in the listing \ref{lst:params-file}.
+This file is supervised by Git and \gls{dvc} to ensure reproducibility and artifacts caching.
+Contents of the configuration file during the training of augmentation networks are presented in Listing \ref{lst:params-file}.
 \begin{longlisting}
 \inputminted{yaml}{listings/params.yaml}
 \caption{Contents of the \textit{params.yaml} file used for training}
 \label{lst:params-file}
 \end{longlisting}
+
+\chapter{Technical documentation}
+\label{ch:appendix-technical}
+As mentioned in Section \ref{sec:exp-management} trainings are done either done with the aid of the \gls{dvc} system or by running scripts manually.
+The trainings done automatically by the \gls{dvc} system contain the word \textit{dvc} as the experiment name.
+The status of these trainings is supervised by \gls{dvc}, current progress can be checked with the \mintinline[breaklines]{shell}{dvc status} command.
+Trainings are automatically rerun or recached based on configuration files after running the \mintinline[breaklines]{shell}{dvc repro} instruction.
+Manual trainings are run by invoking Python directly.
+This can be done with the command: \mintinline[breaklines]{shell}{python -m cnn_res_degrader.train [-s] [-a] [-g] training_name} where the optional arguments decide which architecture to train and the positional argument is the experiment name.
+
+Validation on Proba-V dataset can be run with the command: \mintinline[breaklines]{shell}{python -m cnn_res_degrader.test [-s|-a|-g] weights_path output_dir} where the positional stores model architecture and positional arguments hold paths to trained model weights and output directory.
+
+The augmented Sentinel-2 datasets can be created by running the command: \mintinline[breaklines]{shell}{python -m export_sentinel.py [-s|-a|-g] [-r] [-d] weights_path}, where architecture and path to weights are denoted as described earlier.
+The last two of the switches enable generating random translations (instead of using ones saved in sentinel files) and running a demo export on one image (instead of using the whole dataset).

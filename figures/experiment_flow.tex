@@ -11,43 +11,49 @@
 \tikzset{arrow/.style={-stealth}}
 
 \begin{tikzpicture}[ampersand replacement=\&]
-	\node[cell, fill=blue!20, align=center] at (0,0) (PVTS) {Proba--V train set \\(HR and LR pairs)};
+	\node[cell, fill=blue!20, align=center] at (1,0) (PVTS) {Proba-V train set \\(High and low-resolution pairs)};
 	\node[cell] at (-5,0) (ANA) {Augmentation\\network achitecture};
 	
-	\node[cell, fill=blue!20] at (0,-2) (S2TS) {Sentinel--2 train set\\(single image)};
+	\node[cell, fill=blue!20] at (0.5,-2) (S2TS) {Sentinel-2 set\\(single-resolution)};
 	\node[cell] at (-5,-2) (TAN) {Trained augmentation\\network};
 	
-	\node[cell, fill=blue!20] at (-1.5,-4.5) (SDTR) {Sentinel--2 degraded\\train set};
-	\node[cell, align=center, fill=blue!20] at (-4.5,-5) (SDTS) {Sentinel--2 degraded\\test set};
+	\node[cell] at (6,-2) (BIC) {Downsizing\\with bicubic interpolation};
+	
+	\node[cell, fill=blue!20] at (-1.5,-4.5) (SDTR) {Sentinel-2 degraded\\train set};
+	\node[cell, align=center, fill=blue!20] at (-4.5,-5) (SDTS) {Sentinel-2 degraded\\test set};
 
-\node[cell, fill=blue!20] at (6.5,-4.5) (SATR) {Sentinel--2 artificial\\train set};
-	\node[cell, fill=blue!20] at (3.5,-5) (SATS) {Sentinel--2 artificial\\test set};
+\node[cell, fill=blue!20] at (6.5,-4.5) (SBTR) {Sentinel-2 bicubic\\train set};
+	\node[cell, fill=blue!20] at (3.5,-5) (SBTS) {Sentinel-2 bicubic\\test set};
 	
-	\node[cell] at (1,-8.5) (HRNA) {HighRes--net\\architecture};
+	\node[cell] at (1,-8.5) (HRNA) {HighRes-net\\architecture};
 	
-	\node[cell] at (6,-8.5) (HRNTD) {HighRes--net\\trained on degraded};
-	\node[cell] at (-4,-8.5) (HRNTA) {HighRes--net\\trained on artificial};
+	\node[cell] at (6,-8.5) (HRNTB) {HighRes-net\\trained on bicubic};
+	\node[cell] at (-4,-8.5) (HRNTD) {HighRes-net\\trained on degraded};
 	
-	\node[cell, fill=blue!20] at (-4,-11) (SR) {Sentinel--2 real\\test set\\(single image)};
-	\node[cell, fill=blue!20] at (6,-11) (PT) {Proba--V test\\(HR and LR pairs)};
+	\node[cell, fill=blue!20] at (-4,-11) (SR) {Sentinel-2 real test set\\(single-resolution)};
+	\node[cell, fill=blue!20] at (6,-11) (PT) {Proba-V test\\(High and low-resolution pairs)};
 
     \path[arrow]
     (PVTS) edge (ANA)
     (ANA) edge (TAN)
     (S2TS) edge (TAN)
-    (TAN) edge (SDTR.west)
+    (S2TS) edge (BIC)
+    (BIC) edge (SBTR)
+    (BIC) edge (SBTS)
+    (TAN) edge (SDTR)
+    (TAN) edge (SDTS)
     (SDTR) edge[bend right] (HRNA.north west)
-    (SATR) edge[bend left] (HRNA.north east)
-    (HRNTA) edge[dashed] (SDTS) 
+    (SBTR) edge[bend left] (HRNA.north east)
+    (HRNTB) edge[dashed] (SDTS) 
     (HRNTD) edge[dashed] (SDTS)
-    (HRNTA) edge[dashed] (SATS)
-    (HRNTD) edge[dashed] (SATS)
-    (HRNA) edge (HRNTA)
+    (HRNTB) edge[dashed] (SBTS)
+    (HRNTD) edge[dashed] (SBTS)
+    (HRNA) edge (HRNTB)
     (HRNA) edge (HRNTD)
     (HRNTD) edge[dashed] (SR)
     (HRNTD) edge[dashed] (PT)
-    (HRNTA) edge[dashed] (SR)
-    (HRNTA) edge[dashed] (PT)
+    (HRNTB) edge[dashed] (SR)
+    (HRNTB) edge[dashed] (PT)
     ;
 \end{tikzpicture}
 

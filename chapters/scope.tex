@@ -1,23 +1,23 @@
-This chapter provides a detailed plan of the proposed work and rationale for chosen methods and technologies.
+This chapter provides a detailed plan of the proposed work and a rationale for chosen methods and technologies.
 A subset of super-resolution and augmentation techniques is chosen to include in the course of the work.
 Based on the selection, an experiment plan is laid out.
-A brief description of utilized tools, technologies and methodology to perform deep learning trainings is included.
+A brief description of utilized tools, technologies, and methodology to perform deep learning trainings is included.
 
 \section{Selection of data types and augmentation techniques}
-Various data types in the filed of super-resolution and approaches to data augmentation were introduced in Chapters \ref{ch:introduction} and \ref{ch:analysis}.
+Various data types in the field of super-resolution and approaches to data augmentation were introduced in Chapters \ref{ch:introduction} and \ref{ch:analysis}.
 A subset of possible techniques should be chosen to determine the scope of the experiments.
 
-\subsection{Data types in super--resolution}
-The introductory chapters provide a general overview of super--resolution, data augmentation mechanism and types of satellite imagery.
+\subsection{Data types in super-resolution}
+The introductory chapters provide a general overview of super-resolution, data augmentation mechanism, and types of satellite imagery.
 To lay out a plan of experiments, a subset of selected techniques should be defined.
-The previously described types of super--resolution training data are presented in the form of a graph in the figure \ref{fig:image-types}.
-The graph features a distinction that has not been mentioned before---a difference between fully and semi--simulated mulit--image datasets.
-When multi--image training data generation is considered, one of two approaches can be taken.
-If multiple high--resolution images of the same scene are available, then low--resolution training images can be created by shrinking each of the distinct photos.
-This way of data generation is denoted as \textit{semi--simulated}.
-Otherwise, one can create many low--resolution images from a single high--res one.
-This can be done by shifting the original image randomly multiple times and then, applying the shrinking transformation on each displaced copy.
-This procedure is denoted as a \textit{(fully) simulated} data generation and is presented in the form of pseudocode as algorithm \ref{alg:gen-simulated}.
+The previously described types of super-resolution training data are presented in the form of a graph in Figure \ref{fig:image-types}.
+The graph features a distinction that has not been mentioned before---a difference between fully and semi-simulated multi-image datasets.
+When multi-image training data generation is considered, one of two approaches can be taken.
+If multiple high-resolution images of the same scene are available, then low-resolution training images can be created by shrinking each of the distinct photos.
+This way of data generation can be denoted as \textit{semi-simulated}.
+Otherwise, one can create many low-resolution images from a single high-resolution one.
+This can be done by shifting the original image randomly multiple times and then, applying the shrinking transformation to each displaced copy.
+This procedure is denoted as a \textit{(fully) simulated} data generation and is presented in the form of pseudocode as Algorithm \ref{alg:gen-simulated}.
 \begin{figure}
 	\centering
     \input{figures/image_types}
@@ -25,171 +25,195 @@ This procedure is denoted as a \textit{(fully) simulated} data generation and is
     \label{fig:image-types}
 \end{figure}
 \begin{algorithm}
-\caption{Approach to generating fully simulated mulit--image datasets}
+\caption{Approach to generating fully simulated multi-image datasets}
 \label{alg:gen-simulated}
 \begin{algorithmic}
-	\REQUIRE {$ n\_lrs $, $ shrink\_ratio $}
-	\STATE $ max\_shift = shrink\_ratio $
-	\FORALL{$ hr\_img $}
-		\STATE $ cropped\_hr\_img = crop\_border(hr\_img, max\_shift) $
-		\FOR{$ i = 0 $ \TO $ n $}
-			\STATE $ hr\_shift = generate\_shift(max\_shift) $
-			\STATE $ translated\_hr = translate(hr\_img, hr\_shift) $
-			\STATE $ lr\_image = shrink(translated\_hr, shrink\_ratio) $
-			\STATE $ cropped\_lr\_images_{i} = crop\_border(lr\_image) $
+	\REQUIRE {$ n_{lr} $, $ ratio_{shrink} $}
+	\STATE $ shift_{max} = ratio_{shrink} $
+	\FORALL{$ hr_{img} $}
+		\STATE $ hr_{cropped} = crop\_border(hr_{img}, shift_{max}) $
+		\FOR{$ i = 0 $ \TO $ n_{lr} $}
+			\STATE $ hr_{shift} = generate\_shift(shift_{max}) $
+			\STATE $ hr_{translated} = translate(hr_{img}, hr_{shift}) $
+			\STATE $ lr_{img} = downscale(hr_{translated}, ratio_{shrink}) $
+			\STATE $ lr_{img}^{i} = crop\_border(lr_{img}) $
 		\ENDFOR
-		\STATE $ save\_scene(cropped\_hr\_img, cropped\_lr\_images) $
+		\STATE $ save\_scene(hr_{cropped}, lr_{img}^{i \dots n_{lr}}) $
 	\ENDFOR
 \end{algorithmic}
 \end{algorithm}
 
-A selection of approaches to be taken into account in this work has been made and marked with color in the graph in the figure \ref{fig:image-types}.
+A selection of approaches to be taken into account in this work has been made and marked with blue color in the graph in Figure \ref{fig:image-types}.
 The choice is rather arbitrary and aims to cover the most common, yet uncomplicated variants of data generation.
-Thus, it was decided to perform data augmentation for mulit--image super--resolution with simulated data with deep learning and resizing algorithms.
+Thus, it was decided to perform data augmentation for multi-image super-resolution on single-band pictures with simulated data using deep learning and resizing algorithms.
 
 \subsection{Data augmentation techniques and approaches}
 \subsubsection{Augmentation via deep learning}
 Augmentation with deep learning techniques is the key point of this work.
-In the subsequent chapters three augmentation architectures with varying level of complexity are introduced.
-It should be kept in mind that this kind of augmentation requires a separate dataset to fit the augmentation networks prior to the export of the proper super--resolution training data.
+In the subsequent chapters, three augmentation architectures with varying levels of complexity are introduced.
+It should be kept in mind that this kind of augmentation requires a separate dataset to fit the augmentation networks prior to the export of the proper super-resolution training data.
 
 \subsubsection{Augmentation via interpolation algorithms}
-In the process of the work, the deep learning--based augmentation methods are to be compared with traditional resizing algorithms which are based on interpolation techniques.
+In the process of the work, the deep learning-based augmentation methods are to be compared with traditional resizing algorithms which are based on interpolation techniques.
 The \textit{bicubic interpolation} was chosen as a reference point.
-Furthermore, some of the resized images were subject to several transformations to enhance their quality.
-The brightness, contrast and noise of the interpolated images were adjusted using normal distributions with parameters:
+Furthermore, the images created with bicubic interpolation were subject to several transformations to enhance their quality.
+The brightness, contrast, and noise of the interpolated images were adjusted using normal distributions with parameters:
 \begin{description}
-	\item[Noise] with 0.0 mean and standard deviation of 30.
-	\item[Contrast] with 1.0 mean and standard deviation of 0.2.
-	\item[Brightness] with 0.0 mean and standard deviation of 200.
+	\item[Gaussian noise] with 0.0 mean and standard deviation of 30 was applied to each image.
+	\item[Contrast] was adjusted by multiplying each image by random scalar value from gaussian distribution with 1.0 mean and standard deviation of 0.2.
+	\item[Brightness] was adjusted by adding a random scalar value from gaussian distribution with 0.0 mean and standard deviation of 200 to each image.
+	\item[Gaussian blur] with a standard deviation of 0.5 was applied to each of these low-resolution images.
 \end{description}
-Gaussian blur with sigma of 0.5 was applied on each of these low--resolution images.
-These transformations to the dataset created by bicubic interpolation were chosen outside the scope of this work.
+These were applied to Sentinel-2 images with values in 14-bit (maximum value is 16384) range.
+These transformations applied to the dataset created by bicubic interpolation were chosen outside of the scope of this work.
 
-\subsubsection{Translations between low--resolution images in multi--image super--resolution data}
-As stated before, in this work multi--image super--resolution is taken into account.
-When generating images with both interpolation and deep learning techniques, the same approach to creating translations between low--resolution images was taken.
-These were created using uniform distribution between -0.95 and 0.95 in the high resolution domain (given that the max low--resolution images shift in this domain should be subpixel).
+\subsubsection{Translations between low-resolution images in multi-image super-resolution data}
+As stated before, in this work multi-image super-resolution is taken into account.
+When generating images with both interpolation and deep learning techniques, the same approach to creating translations between low-resolution images was taken.
+These were created using uniform distribution between $-0.95$ and $0.95$ in the high-resolution domain.
 The translations were applied in the vertical and horizontal directions.
 
 \section{Plan of experiments}
+After choosing a subset of augmentation techniques to examine, an experiment plan should be laid out.
+
 \subsection{Required data}
-The broad aim of the work is to train augmentation neural networks on small real--world datasets and then use the trained models to export a larger, synthetic dataset which should be used to fit super--resolution algorithm.
-A number of datasets is required to perform this task.
+The broad aim of the work is to train augmentation neural networks on small real-world datasets and then use the trained models to export a larger, synthetic dataset which should be used to fit a super-resolution algorithm.
+A number of datasets are required to perform this task.
 To clarify the demands for specific datasets can be listed as:
 \begin{enumerate}
-	\item Dataset containing high and low--resolution images for training an augmentation network.
-	\item Dataset containing high and low--resolution images for testing the augmentation network.
+	\item A dataset containing high and low-resolution images for training an augmentation network.
+	\item A dataset containing high and low-resolution images for testing the augmentation network.
 	\item Dataset that should be augmented with the network.
-	      This set doesn't need to contain high and low--resolution pairs.
-	      The low--resolution images for existing high--resolution ones should be generated by the augmentation network.
-	      Result of the augmentation will be used to train the super--resolution network.
-	 \item Dataset of high and low--resolution images for testing the super--resolution network.
+	      This set does not need to contain high and low-resolution pairs.
+	      The low-resolution images for existing high-resolution ones should be generated by the augmentation network.
+	      Results of the augmentation will be used to train the super-resolution network.
+	 \item Dataset of high and low-resolution images for testing the super-resolution network.
 \end{enumerate}
 
-\subsubsection{Proba--V as an augmentation training dataset}
+\subsubsection{Proba-V as an augmentation training dataset}
 \label{sec:probav}
-The \textit{Proba--V} dataset \cite{esa-proba} can be used to fill the first two requirements.
-It contains images taken during the \textit{Proba--Vegetation} satellite mission launched by the \textit{European Space Agency} in 2013.
+The \textit{Proba-V} dataset \cite{esa-proba} can be used to fill the first two requirements.
+It contains images taken during the \textit{Proba-Vegetation} satellite mission launched by the \textit{European Space Agency} in 2013.
 The dataset contains imagery taken in multiple spectral bands.
-Two subsets are regarded in this work---the \textit{RED} band (610–-690 \si{\nano\meter} wave length) and the \textit{NIR (near--infra--red)} band (777--893 \si{\nano\meter} wave length).
-Proba contains multiple real--life low--resolution images per one high--resolution image.
-Images of the same scene were taken in moments, thus they vary slightly in framing and atmospheric conditions.
-Unprocessed Proba high--resolution images are 384 by 384 pixels, low--resolution photos are 128 by 128 pixels.
-A selected pair of high and low--resolution samples from Proba--V dataset is shown in the figure \ref{fig:proba-sample}.
-\begin{figure}
+Two subsets are regarded in this work---the \textit{\gls{red}} band (610--690 \si{\nano\meter} wavelength) and the \textit{\gls{nir}} band (777--893 \si{\nano\meter} wavelength).
+Proba-V contains multiple real-life low-resolution images per one high-resolution image.
+Images of the same scene were taken in different moments, thus they vary slightly in framing and atmospheric conditions.
+Unprocessed Proba-V high-resolution images are 384 by 384 pixels, low-resolution photos are 128 by 128 pixels.
+As mentioned in Chapter \ref{ch:analysis} high-resolution images have \gls{gsd} of $ 1/3 \times 1/3 $ kilometer per pixel and the low-resolution ones feature \gls{gsd} of $ 1 \times 1 $ kilometer per pixel \cite{direckx-2013-proba}.
+A selected pair of high and low-resolution samples from the Proba-V dataset is shown in Figure \ref{fig:proba-sample}.
+\begin{figure}[htb!]
     \begin{subfigure}{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{sample_nir_hr}
-        \caption{High--resolution image}
+        \caption{High-resolution image}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{sample_nir_lr}
-        \caption{Low--resolution image}
+        \caption{Low-resolution image}
     \end{subfigure}
-    \caption{Sample image pair from \textit{Proba--V NIR train dataset}}
+    \caption{Sample image pair from \textit{Proba-V \gls{nir} train dataset}}
     \label{fig:proba-sample}
 \end{figure}
-Furthermore, Proba--V features a set of binary masks for low--resolution images.
+Furthermore, Proba-V features a set of binary masks for low-resolution images.
 These masks indicate areas of photos that may not be suitable for processing, such as clouds or blank spaces.
-An example of Proba--V image with a binary mask designating clouds is shown in the figure \ref{fig:proba_sample_mask}.
-\begin{figure}
+An example of a Proba-V image with a binary mask designating clouds is shown in Figure \ref{fig:proba_sample_mask}.
+\begin{figure}[htb!]
     \begin{subfigure}{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{proba_sample_clouds}
-        \caption{Sample Proba--V image with invalid area that contains clouds}
+        \caption{Sample Proba-V image with invalid areas that contain clouds}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{proba_sample_mask}
-        \caption{Binary mask for a sample Proba--V image with invalid area}
+        \caption{Binary mask for a sample Proba-V image with invalid area}
     \end{subfigure}
-    \caption{Proba--V sample with invalid area and its binary mask}
+    \caption{Proba-V sample with invalid area and its binary mask}
     \label{fig:proba_sample_mask}
 \end{figure}
+Proba-V pictures are saved as 16-bit images; however, only 14 bits are used to store pixel values.
 
-\subsubsection{Sentinel--2 as a super--resolution training dataset}
-The super--resolution training part of the data demands can be met by utilizing \textit{Sentinel--2} dataset \cite{esa-sentinel}.
-Contrary to Proba, it doesn't feature high and low--resolution scenes, for this reason, it suits the role of the dataset to undergo data generation process.
-Sentinel--2 is part of a European earth observation programme that has lasted since 2015.
+\subsubsection{Sentinel-2 as a super-resolution training dataset}
+The super-resolution training part of the data demands can be met by utilizing \textit{Sentinel-2} dataset \cite{esa-sentinel}.
+Contrary to Proba-V, it does not feature high and low-resolution scenes, for this reason, it suits the role of the dataset to undergo the data generation process.
+Sentinel-2 is a part of the European Earth Observation Program that has lasted since 2015.
 It gathers data from two twin satellites that acquire optical imagery at high spatial resolution from 10 to 60 meters.
-Sentinel images are hyperspectral and feature a total of 13 bands.
-Since it was decided not to include multispectral super--resolution only band eight is to be used (which is close to infrared).
-A sample image from Sentinel--2 dataset is shown in the figure \ref{fig:sentinel_sample}.
+Sentinel-2 images are multi-spectral and feature a total of 13 bands with \gls{gsd} values of $ 10 \times 10 $, $ 20 \times 20 $ and $ 60 \times 60 $ meters per pixel \cite{tas-sentinel}.
+Since it was decided not to include multi-spectral super-resolution only band eight is to be used.
+This band features spectrum close to infrared (835.1 nm central wavelength, 145 nm bandwidth for satellite Sentinel-2~A and 833 nm central wavelength, 133 nm bandwidth for satellite Sentinel-2~B) with \gls{gsd} of $ 10 \times 10 $ meters per pixel).
+A sample image from the Sentinel-2 dataset is shown in Figure \ref{fig:sentinel_sample}.
 \begin{figure}
 	\centering
     \includegraphics{sentinel_sample}
-    \caption{Sample image from \textit{Sentinel--2 dataset} (eight band)}
+    \caption{Sample image from \textit{Sentinel-2 dataset} (eight band)}
     \label{fig:sentinel_sample}
 \end{figure}
+As with Proba-V, Sentinel-2 is saved using 16-bit image format; however, only 14 bits store useful pixel values.
 
-\subsubsection{Dataset for super--resolution evaluation}
-Additional datasets are needed to evaluate final results.
-The goal of the tests is to measure super--resolution generalization capabilities and data selection impact on the metrics.
+\subsubsection{Dataset for super-resolution evaluation}
+Additional datasets are needed to evaluate the final results.
+The goal of the tests is to measure super-resolution generalization capabilities and data selection impact on the metrics.
 This can be done in four ways with different data:
 \begin{itemize}
-	\item Each augmented Sentinel dataset should contain a test subset.
-	\item Test subset generated in different ways can be tested in cross--validation scheme.
-	\item Separate real--world Sentinel images can be used for tests. Sentinel doesn't include high and low--resolution pairs, so numeric tests are not possible. However, it is still viable to perform a visual test in search of artifacts.
-	\item The Proba-V test subset used to evaluate the augmentation process can be used to measure super--resolution performance. Since the initial tests are not a part of any decision process, there is no information leak and the Proba subset can be used twice.
+	\item Each augmented Sentinel-2 dataset should contain a test subset. Each super-resolution network can be evaluated on a test set generated in the same way as that used for the training.
+	\item Test subsets generated in different forms can be used in a cross-type evaluation scheme. In this work, the augmented datasets are created in a variety of ways. The network trained on one version of an augmented dataset can be tested on a dataset created using a different method. For example, a super-resolution network trained using the data created with bicubic interpolation can be tested on the data generated by a neural network (and the other way). These cross-type tests can be used to examine generalization capabilities.
+	\item Separate real-world Sentinel-2 images can be used for tests. Sentinel-2 does not include high and low-resolution pairs, so numeric tests are not possible. However, it is still viable to perform a visual test, for example, in search of artifacts.
+	\item The Proba-V test subset used to evaluate the augmentation process can be used to measure super-resolution performance. Since the initial tests are not a part of any decision process, there is no information leak and the Proba-V subset can be used twice.
 \end{itemize}
 
 \subsection{Experiment flow}
-Given the selection of data augmentation methods and available, data an experiment flow can be laid out in the form of a graph in the figure \ref{fig:experiment-flow}.
-The graph follows the assumption of training various augmentation models with Proba--V dataset, exporting Sentinel--2 images for super--resolution training and final evaluation using cross validation and tests on real--world data.
+Given the selection of data augmentation methods and available data an experiment flow can be laid out in the form of a graph in Figure \ref{fig:experiment-flow}.
+The experiment flow presented in the graph is as folows:
+\begin{enumerate}
+	\item Use existing real-life Proba-V dataset to train augmentation networks.
+	\item Take the existing Sentinel-2 dataset (which features single-resolution images). Use the augmentation networks to create Sentinel-2 datasets with high and low-resolution image pairs. These datasets are designated as \textit{degraded} in the graph.
+	\item Use the single-resolution Sentinel-2 and bicubic interpolation to create another version of the Sentinel-2 dataset with high and low-resolution pairs.
+	\item The generated Sentinel-2 datasets should contain subsets for training and testing super-resolution networks.
+	\item Use all the generated datasets to train the HighRes-net super-resolution network.
+	\item Evaluate the super-resolution networks using various datasets:
+	\begin{enumerate}
+		\item Evaluate networks on the test subsets associated with the training sets. Test each network on the data created in the same way as its training set.
+		\item Use the generated test subsets to perform the cross-type evaluation. Test the networks on the image sets created differently from the training data.
+		\item Use the Proba-V test subset to evaluate results of training HighRes-net on different datasets.
+		\item Use the separate real-life single-image Sentinel-2 data to perform visual checks.
+	\end{enumerate} 
+\end{enumerate}
 \begin{figure}
 	\centering
 	\input{figures/experiment_flow.tex}
-	\caption{Graph of the experiment flow, solid lines indicate trainings, dashed arrows designate evaluations}
+	\caption{Graph of the experiment flow (solid lines indicate trainings, dashed arrows designate evaluations, blue stands for datasets, white is for models and algorithms)}
 	\label{fig:experiment-flow}
 \end{figure}
 
 \section{Selection of tools and technologies}
+The implementation of the experiment plan requires a selection of programming tools.
+Subsequent sections provide a rationale for choosing a set of necessary technologies and libraries to accomplish the project's goals.
+
 \subsection{Language and libraries}
-\textit{Python}, which is an industry standard for neural network research and scientific computing has been chosen as a main language for the implementation.
-It combines ease of prototyping new code with efficient use of existing libraries written in more performant languages.
-Python version 3.8 was chosen for the project as a reasonably recent, yet mature and field--tested version.
+\textit{Python}, which is an industry-standard for neural network research and scientific computing has been chosen as the main language for the implementation.
+It combines the ease of prototyping new code with the efficient use of existing libraries written in more performant languages.
+Python version 3.8 was chosen for the project as a reasonably recent, yet mature and field-tested version.
 
-The main part of the work, consisting in writing neural network architectures and training them was written using \textit{Tensorflow} library.
+The main part of the work which consists in writing neural network architectures and training them was written using the \textit{Tensorflow} library.
 Tensorflow has been a leading deep learning library in recent years and is widely used in the industry and academia.
-The version 2.5 of the library was chosen for the project.
-From the second version Tensorflow includes \textit{Keras} neural network prototyping interface natively as a default and recommended way for model building.
-This work utilizes the Keras API as well as some underlying Tensorflow function for fine tuning and expanding models.
-Tensorflow supports GPU acceleration via \textit{Nvidia CUDA} libraries, which is crucial for conducting efficient trainings.
+Version 2.5 of the library was chosen for the project.
+From the second version, Tensorflow includes \textit{Keras} neural network prototyping interface natively as default and recommended way for model building.
+This work utilizes the Keras API as well as some underlying Tensorflow functions for fine-tuning and expanding models.
+Tensorflow supports \gls{gpu} acceleration via \textit{NVIDIA CUDA} libraries, which is crucial for conducting efficient trainings.
 
-The image manipulation tasks are performed using \textit{SciKit--image} library which offers a variety of IO functions, transformations and analysis tools.
-\textit{Matplotlib}, another wide--spread Python library was used to create plots and heatmaps in the work.
-Alongside SciKit--image, \textit{Pillow} was used for some image related operations (mainly for resizing images with specific interpolation modes).
+The image manipulation tasks are performed using the \textit{SciKit-image} library which offers a variety of utilities, transformations, and analysis tools.
+\textit{Matplotlib}, another wide-spread Python library was used to create plots and heatmaps in the work.
+Alongside SciKit-image, \textit{Pillow} was used for some image-related operations (mainly for resizing images with specific interpolation modes).
 
 \textit{NumPy}, the most popular numerical calculations library was chosen as a tool for matrix manipulation and mathematical operations.
-Arrays created with NumPy are stored in contiguous memory layout, which enables utilization of performance optimizations such as vectorized operations. 
+Arrays created with NumPy are stored in a contiguous memory layout, which enables the utilization of performance optimizations such as vectorized operations. 
 NumPy ubiquity in the world of scientific computing with Python proves to be very convenient.
-It is compatible with other popular libraries; it is interoperable with parts of Keras API, Scikit--image stores images as NumPy arrays, Matplotlib can plot data from NumPy arrays out of the box.
-NumPy arrays' performance comes from their static nature, their size is predetermined.
-This constrain is prerequisite to the contiguous memory layout of the arrays, which enables utilization of fast mathematical operations.
+It is compatible with other popular libraries; it is interoperable with parts of Keras API, Scikit-image stores images as NumPy arrays, Matplotlib can plot data from NumPy arrays out-of-the-box.
+NumPy arrays' performance comes from their static nature, as their size is predetermined.
+This constrain is a prerequisite to the contiguous memory layout of the arrays, which enables the utilization of fast mathematical operations.
 However, this comes at a cost of flexibility; resizing the NumPy arrays is costly and often requires substantial memory reallocations.
 
 The set of required libraries with proper versions can be installed using \textit{requirements.txt} files.
@@ -198,76 +222,48 @@ It is best to use it inside a Python \textit{virtualenv}, running the command: \
 To ensure code quality and avoid mistakes, a \textit{continuous integration} system was used.
 Continuous integration is based on automatic code building on the server with the help of version control systems.
 Every time a new commit is pushed to the upstream, a set of checks is run remotely.
-The integration system reports any errors which prevents integrating invalid code into the main system.
-The built--in GitHub continuous integration and delivery system, called \textit{GitHub Actions} was used in the project.
+The integration system reports any errors and prevents the integration of invalid code into the main system.
+The built-in GitHub continuous integration and delivery system, called \textit{GitHub Actions} was used in the project.
 Integration checks are performed inside a Ubuntu Docker image and consist of various \textit{flake8} linter analytics.
 
 \subsection{Data and experiment management}
-The codebase in the work was managed with \textit{Git} version control system.
+\label{sec:exp-management}
+The codebase in the work was managed with the \textit{Git} version control system.
 Git is the most popular tool for tracking changes in code and text files.
 However, it was not created with media and datasets in mind.
-Git may work very slowly with large datasets and popular Git server providers such as \textit{GitHub} offer limited storage for repositories.
-For this reason, \textit{dvc}---a supplementary tool was used.
-\textit{Dvc} consists of two main components: data versioning and experiment tracking.
-The data versioning part works similarly to systems like \textit{Git LFS}; it stores metadata inside the Git repository and the actual data in other storage (e.g. Google Drive).
+Git may work very slowly with large data and popular Git server providers such as \textit{GitHub} offer limited storage for repositories.
+For this reason, \textit{\gls{dvc}}---a supplementary tool was used.
+\gls{dvc} consists of two main components: data versioning and experiment tracking.
+The data versioning part is similar to systems like \textit{Git LFS}; it stores metadata inside the Git repository and the actual data in other storage (e.g. Google Drive).
 Information about the proper data is stored in the form of \textit{MD5} hashes in the metadata files.
 The metadata versioned with Git can be used to download proper data from the external cloud storage.
-\textit{Dvc} is analogous to Git in operation, it uses a command line interface with a similar structure.
-To download the data in the project one should run command \mintinline{shell}{dvc pull}.
-Sine the metadata is versioned with Git, when going back in the commit history one should run \mintinline{shell}{dvc checkout} after \mintinline{shell}{git checkout} to conceal data versions.
+\gls{dvc} is analogous to Git in operation, it uses a command-line interface with a similar structure.
+To download the data in the project one should run the command \mintinline{shell}{dvc pull}.
+Since the metadata is versioned with Git, when going back in the commit history one should run \mintinline{shell}{dvc checkout} after \mintinline{shell}{git checkout} to conceal data versions.
 
-The experiment tracking part of Dvc ensures reproducibility and result caching.
+The experiment tracking part of \gls{dvc} ensures reproducibility and results caching.
 The layout of experiments is stored in the \textit{dvc.yaml} file where each stage of experiment is described with its input dependencies and outputs.
 The results of each stage can be cached and rebuilt automatically depending on changes in the dependencies.
 The experiments in this work usually depend on data and files with model architecture.
 Training models can be parametrized using a configuration file, here named \textit{params.yaml}.
 Parameters of models and training can be changed by editing this file.
-Another convenience of dvc is that the outputs are automatically rebuilt on changes in the parameters.
+Another convenience of \gls{dvc} is that the outputs are automatically rebuilt on changes in the parameters.
 Trained models are cached and bound with code and parameters used for training.
-Similarly to the data versioning system, models and artifacts are also tracked with metadata and git.
+Like the data versioning system, models and artifacts are also tracked with metadata and git.
 When going back with history, \mintinline{shell}{dvc checkout} will also conceal artifacts and data.
 The stage of the experiment pipeline is stored in the \textit{dvc.lock} file that also contains metadata.
-The command \mintinline{shell}{dvc repro} is used to reproduce experiments.
-
-Scripts in the project can also be run independent of dvc.
-Training can be run with command: \mintinline[breaklines]{shell}{python -m cnn_res_degrader.train [-s] [-a] [-g] training_name} where the optional arguments decide which architecture to train and the positional argument is the experiment name.
-The trainings done automatically by the Dvc system contain word \textit{dvc} as the experiment name.
-Validation on Proba--V dataset can be run with command: \mintinline[breaklines]{shell}{python -m cnn_res_degrader.test [-s|-a|-g] weights_path output_dir} where the positional stores model architecture and positional arguments hold paths to trained model weights and output directory.
-
-The augmented sentinel datasets can be created by running command: \mintinline[breaklines]{shell}{python -m export_sentinel.py [-s|-a|-g] [-r] [-d] weights_path}, where architecture and path to weights are denoted as described earlier.
-The last two of the switches enable generating random translations, instead of using ones saved in sentinel files and running a demo export on one image instead of using the whole dataset.
+The command \mintinline{shell}{dvc repro} is used to reproduce experiments; however, scripts in the project can also be run independently of \gls{dvc} (more details about reproducing experiments can be found in Appendix \ref{ch:appendix-technical}).
 
 \section{Project strucutre}
 Files in the project have the following structure and function:
 \begin{description}
 	\item[.github/workflows/build.yml] continuous integration system configuration.
-	\item[cnn\_res\_degrader] main part of the source code, contains the augmentation models, training and testing scripts.
-	\item[dataset\_augmentation] source code for exporting augmented Sentinel--2 datasets.
-	\item[data] super--resolution datasets and artifacts controlled by Dvc.
-	\item[dvc.lock] metadata to track experiment progress in current commit.
-	\item[dvc.yaml] dvc experiment description.
+	\item[cnn\_res\_degrader] main part of the source code, contains the augmentation models, training, and testing scripts.
+	\item[dataset\_augmentation] source code for exporting augmented Sentinel-2 datasets.
+	\item[data] super-resolution datasets and artifacts controlled by \gls{dvc}.
+	\item[dvc.lock] metadata to track experiment progress in the current commit.
+	\item[dvc.yaml] DVC experiment description.
 	\item[params.yaml] models and experiment configuration.
 	\item[requirements.txt] libraries requirements.
 \end{description}
-Some configuration files and minor parts of project were omitted in this description.
-
-\section{Additional remarks}
-The following chapters will include many visualizations and image previews.
-They often include a side--by--side comparison between high and low resolution images of the same scene that were generated using different methods.
-When computers display single--chanel images (like the pictures presented in this work), a colormap is often used.
-The most popular colormap is grayscale which displays white for max values, blacks for min values and shades of gray in between.
-To improve visibility of details, a yellow and blue colormap called \textit{Viridis} is often used in this work.
-Viridis is an example of a \textit{Perceptually Uniform Color Map}, which aims to guarantee an even perceived contrast of all color shades in the map.
-However, when comparing a number of side--by--side images it is important to apply the colormap consistently across all pictures.
-Modern image processing libraries may try to stretch colormap to the range of input image.
-If images that are to be compared differ in maximal and minimal values, the way colormap is applied will be different.
-It is important to ensure that images in the same scene display pixels with the same value in the same color.
-For this reason, when several images are to be compared, they should be displayed with common colormap.
-At the same time, an outlier pixel in one of the images can result in the colormap not being well suited to display the rest of the pictures.
-The solution to choosing a good colormap range is to use maximum and minimum values using pixel mean values and standard deviation, as presented in the formula \ref{eq:colormap-maxmin}.
-This way, only pixels within the range of three standard deviations from mean are taken into consideration when creating a common colormap for image comparison.
-\begin{equation}
-	c_{max,min} = \bar{p} \pm 3 \cdot \sigma_p
-\label{eq:colormap-maxmin}
-\end{equation}
-  
+Some configuration files and minor parts of the project were omitted in this description.
