@@ -303,7 +303,7 @@ As in the embedding block, the fusion operator has a single instance that is sha
 The last step of super-resolution process is to upscale the image by decoding the hidden state.
 This is done with a transposed convolutional layer with \gls{prelu} activation.
 The transposition of the output of convolution makes the data grow in spatial dimensions, instead of the usual increase of depth when convolving.
-The final image is constructed by applying convolution of size one, which does not change the size of the image.
+The final image is constructed by applying convolution of size one.
 
 \subsubsection{Registered loss calculation}
 \label{sec:shiftnet}
