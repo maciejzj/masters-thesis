@@ -73,7 +73,7 @@ However, in  contrast to the manual feature extraction technique, these filters 
 Elements in the filter tensor are treated like neuron weights, and they are accommodated during the gradient descent.
 This enables the creation of much better performing and flexible image processing neural networks.
 Convolutional layers can also be viewed as dense layers with shared weights between groups of pixels.
-This way, all pixels can be used in the fitting process without connecting every value in the image with every neuron, which would result in very big and hard-to-train networks \cite[Chapter~9]{goodfellow-2016-deeplearning}.
+This way, all pixels can be used in the fitting process without connecting every value in the image with every neuron, which would result in very big and hard-to-train networks \cite{goodfellow-2016-deeplearning}.
 A single convolutional layer usually consists of a number of filters.
 After passing a standard image through such a layer its depth increases to the number of filters.
 It is a common practice to apply a \textit{pooling} (\textit{maximum pooling, average pooling, global pooling}) operation after the convolutional layer to decrease spatial dimension of the image.
@@ -245,7 +245,7 @@ An in-depth analysis of a super-resolution neural network is provided in Section
 In recent years many super-resolution architectures have emerged due to advancements in deep learning techniques.
 At the moment, \gls{rams} architecture achieves one of the best scores.
 However, in this work HighRes-net architecture is utilized.
-\textit{HighRes-net}, which is a few months older, achieves slightly worse results; however, it is simpler and faster to train \cite{paperswithcode-ranking}.
+HighRes-net, which is a few months older, achieves slightly worse results; however, it is simpler and faster to train \cite{paperswithcode-ranking}.
 Because the aim of the work is to compare different data generation techniques, not the super-resolution algorithms themselves, the more manageable architecture was chosen.
 A brief description of the more sophisticated architecture is also given to provide a wider context.
 

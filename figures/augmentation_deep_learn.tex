@@ -12,7 +12,7 @@
 
 \begin{tikzpicture}[ampersand replacement=\&]
     \node[cell, fill=blue!20] at (-8,-2) (SP) {Small dataset of\\high and low-resolution\\pairs};
-    \node[cell, fill=blue!20] at (0,0) (S) {Single-resolution images\\(non suitable for super-resolution training\\bacause high and low-resolution pairs are missing)};
+    \node[cell, fill=blue!20] at (0,0) (S) {Single-resolution images\\(not suitable for super-resolution training\\bacause high and low-resolution pairs are missing)};
     \node[cell] at (0, -2) (A) {Augmentation network};
     \node[cell, fill=blue!20] at (0, -4) (P) {Low-resolution images\\(bundled with the original images\\create high and low-resolution pairs\\for super-resolution training)};
     

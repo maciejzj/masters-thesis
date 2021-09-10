@@ -29,20 +29,19 @@ Two main kinds of super-resolution algorithms can be outlined:
 The first one is the obvious approach where a single low-resolution image is
 translated into a high-resolution picture.
 The second method is to combine multiple low-resolution images into a single high-resolution one.
-The first technique is often called \textit{single-image super-resolution} and the latter \textit{multi-image super-resolution}.
+The first technique is often called \textit{single-image} and the latter \textit{multi-image} super-resolution.
 
-Super-resolution imaging is a technique relevant in the fields of satellite imaging,
+Super-resolution is a technique relevant in satellite imaging,
 remote sensing, and geoscience.
-This work focuses on the application of super-resolution technology to this type of data.
+This work focuses on the application of super-resolution technology in these fields.
 The most common cause for image enhancement is aesthetics.
-This application is viable in satellite imaging; however, super-resolution can
-lead to other practical advantages.
+This application is viable in satellite imaging; however, super-resolution has other practical advantages.
 Image enhancing techniques can be used as a preprocessing step in remote
 sensing pipelines.
-For this reason, super-resolution can be especially useful when considered in
+For this reason, super-resolution may be especially useful when considered in
 the context of satellite imagery.
 Multi-image super-resolution in satellite applications can be treated as a data fusion operation.
-A visual demonstration of modern super-resolution applied on satellite images can be seen in Figure \ref{fig:super-res-demo}.
+A visual demonstration of modern super-resolution applied on satellite images is presented in Figure \ref{fig:super-res-demo}.
 In these examples, a set of nine low-resolution images per scene was super-resolved into a single high-resolution one.
 A sample of those nine images is shown in the comparison.
 \begin{figure}
@@ -192,8 +191,8 @@ For clarity, the different methods of data augmentation are illustrated in Figur
 Each of these starts with a dataset of single-resolution images.
 To train a super-resolution algorithm a set of high and low-resolution pairs is needed.
 Both of these methods create low-resolution counterparts for existing images to generate the training pairs.
-The approach based on traditional resizing algorithms creates missing low-resolution pictures by downsizing existing ones.
-However, with deep learning an existing set of high and low-resolution images is used to train the augmentation model.
+The approach based on traditional resizing algorithms creates missing low-resolution pictures by downsizing the existing ones.
+However, with deep learning a set of high and low-resolution images is used to train the augmentation model.
 This model learns to downsize existing images.
 In a sense, the augmentation network learns to perform a task opposite to the super-resolution algorithm.
 Then the augmentation model can be used to shrink existing images and create low-resolution images to be eventually used in the super-resolution training.
